@@ -99,7 +99,8 @@
   const savedStudent = window.MathPractice.getStudent();
   if (savedStudent) {
     fillStudentForm(savedStudent);
-    setLookupStatus("Cari ID untuk memastikan data siswa sesuai dengan sheet terbaru.", "idle");
+    matchedStudentId = savedStudent.student_id;
+    setLookupStatus("Identitas tersimpan siap digunakan. Cari ID lagi jika ingin memperbarui data dari sheet.", "success");
   }
 
   studentForm.addEventListener("submit", function (event) {
