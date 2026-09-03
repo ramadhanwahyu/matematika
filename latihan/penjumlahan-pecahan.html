@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Latihan 10 soal penjumlahan pecahan." />
+    <title>Penjumlahan Pecahan | Math Practice</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="quiz-page">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html" aria-label="Math Practice, beranda">Math<span>Practice</span></a>
+        <div class="header-actions">
+          <p id="student-summary" class="student-summary"></p>
+          <a class="back-link" href="../index.html">← Kembali ke beranda</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="quiz-main container">
+      <section id="start-screen" class="card quiz-card intro-card" aria-labelledby="quiz-title">
+        <p class="eyebrow">Latihan pecahan</p>
+        <h1 id="quiz-title">Penjumlahan Pecahan</h1>
+        <p class="intro-text">Kerjakan 10 soal acak. Samakan penyebut dengan KPK, jumlahkan pembilang, lalu sederhanakan jika perlu.</p>
+        <div class="info-strip">
+          <span>10 soal acak</span><span aria-hidden="true">•</span><span>Jawab dalam bentuk pecahan</span>
+        </div>
+        <button id="start-button" class="button button-primary" type="button" onclick="window.MathPractice.startFractionExercise()">Mulai Latihan</button>
+      </section>
+
+      <section id="quiz-screen" class="card quiz-card is-hidden" aria-live="polite" aria-labelledby="question-progress">
+        <div class="quiz-topline">
+          <p id="question-progress" class="question-progress">Soal 1 dari 10</p>
+          <p id="score-progress" class="score-progress">Jawab dengan teliti</p>
+        </div>
+        <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        <div class="question-area">
+          <p class="question-prompt">Hitung hasil penjumlahan berikut.</p>
+          <p id="question-expression" class="fraction-expression" aria-label="Soal pecahan"></p>
+        </div>
+        <form id="answer-form" class="answer-form" novalidate>
+          <fieldset>
+            <legend>Masukkan jawabanmu</legend>
+            <div class="fraction-inputs">
+              <div class="field-group">
+                <label for="numerator-input">Pembilang</label>
+                <input id="numerator-input" name="numerator" type="text" inputmode="numeric" autocomplete="off" maxlength="5" aria-describedby="answer-help answer-message" />
+              </div>
+              <span class="fraction-line" aria-hidden="true"></span>
+              <div class="field-group">
+                <label for="denominator-input">Penyebut</label>
+                <input id="denominator-input" name="denominator" type="text" inputmode="numeric" autocomplete="off" maxlength="5" aria-describedby="answer-help answer-message" />
+              </div>
+            </div>
+            <p id="answer-help" class="field-help">Contoh: untuk hasil 3, isi 3 sebagai pembilang dan 1 sebagai penyebut.</p>
+            <p id="answer-message" class="form-message" role="alert"></p>
+          </fieldset>
+          <button id="next-button" class="button button-primary" type="submit">Jawab dan lanjutkan</button>
+        </form>
+      </section>
+
+      <section id="result-screen" class="card quiz-card result-card is-hidden" aria-labelledby="result-title">
+        <p class="eyebrow">Sesi selesai</p>
+        <h1 id="result-title" tabindex="-1">Hasil latihanmu</h1>
+        <div class="score-orbit" aria-label="Nilai akhir"><strong id="final-score">0</strong><span>/100</span></div>
+        <p id="result-summary" class="result-summary"></p>
+        <div class="result-details">
+          <div><span id="correct-count">0</span><p>Jawaban benar</p></div>
+          <div><span id="incorrect-count">0</span><p>Jawaban salah</p></div>
+          <div><span id="total-count">10</span><p>Total soal</p></div>
+        </div>
+        <div class="result-actions">
+          <button id="restart-button" class="button button-primary" type="button" onclick="window.MathPractice.startFractionExercise()">Ulangi Latihan</button>
+          <a class="button button-outline" href="../index.html">Kembali ke Beranda</a>
+        </div>
+        <div id="save-status" class="save-status" role="status" aria-live="polite"></div>
+        <button id="retry-save-button" class="text-button is-hidden" type="button" onclick="window.MathPractice.retryFractionResult()">Coba simpan lagi</button>
+      </section>
+    </main>
+
+    <script src="../js/common.js"></script>
+    <script src="../js/penjumlahan-pecahan.js"></script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Simpan identitas siswa sebelum memulai latihan matematika." />
+    <title>Identitas Siswa | Math Practice</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="quiz-page">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Math Practice, beranda">Math<span>Practice</span></a>
+        <a class="back-link" href="index.html">← Kembali ke beranda</a>
+      </div>
+    </header>
+
+    <main class="quiz-main container">
+      <section class="card quiz-card student-card" aria-labelledby="student-title">
+        <p class="eyebrow">Sebelum mulai</p>
+        <h1 id="student-title">Identitas siswa</h1>
+        <p class="intro-text">Simpan data singkat ini di perangkatmu agar tidak perlu mengisinya lagi saat membuka latihan berikutnya.</p>
+        <form id="student-form" class="student-form" novalidate>
+          <div class="field-group">
+            <label for="student-id-input">ID siswa</label>
+            <input id="student-id-input" name="student_id" type="text" autocomplete="off" maxlength="32" aria-describedby="student-id-help student-form-message" />
+            <p id="student-id-help" class="field-help">Contoh: S001</p>
+          </div>
+          <div class="field-group">
+            <label for="student-name-input">Nama</label>
+            <input id="student-name-input" name="name" type="text" autocomplete="name" maxlength="80" aria-describedby="student-form-message" />
+          </div>
+          <div class="field-group">
+            <label for="class-name-input">Kelas</label>
+            <input id="class-name-input" name="class_name" type="text" autocomplete="off" maxlength="64" aria-describedby="student-form-message" />
+            <p class="field-help">Contoh: X-A</p>
+          </div>
+          <p id="student-form-message" class="form-message" role="alert"></p>
+          <button class="button button-primary" type="submit">Simpan dan lanjutkan</button>
+        </form>
+        <button id="clear-student-button" class="text-button is-hidden" type="button" onclick="window.MathPractice.clearSavedStudent()">Hapus identitas tersimpan</button>
+      </section>
+    </main>
+
+    <script src="js/common.js"></script>
+    <script src="js/student.js"></script>
+  </body>
+</html>
