@@ -81,34 +81,37 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .site-footer p { margin: 0; }
 
 .home-page { background: #f8f9f7; }
-.home-intro { padding: clamp(4.2rem, 9vw, 7.2rem) 0 clamp(3.2rem, 7vw, 5.2rem); }
-.home-intro h1 { max-width: 11ch; margin-bottom: 1.05rem; font-size: clamp(3rem, 6.2vw, 5.6rem); }
-.home-intro h1 span { color: var(--color-primary); }
-.home-description { max-width: 35rem; margin: 0; color: var(--color-muted); font-size: clamp(1.04rem, 1.7vw, 1.18rem); }
-.home-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; max-width: 52rem; margin: clamp(2.8rem, 6vw, 4rem) 0 0; padding: 1.15rem 0 0; border-top: 1px solid var(--color-border); list-style: none; }
-.home-steps li { display: flex; gap: .65rem; align-items: baseline; min-width: 0; }
-.home-steps span { color: var(--color-primary); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
-.home-steps p { margin: 0; color: var(--color-muted); font-size: .84rem; font-weight: 700; }
-.home-catalog { padding-bottom: clamp(4.5rem, 9vw, 7rem); }
-.home-catalog .section-heading { margin-bottom: 1.4rem; }
-.home-exercise-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-.home-exercise-card { display: flex; flex-direction: column; min-height: 23rem; padding: clamp(1.4rem, 3vw, 2rem); transition: border-color 160ms ease, transform 160ms ease; }
-.home-exercise-card:hover { border-color: #97b7c9; transform: translateY(-2px); }
-.exercise-card-topline { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
-.exercise-card-topline .exercise-label { margin: 0; }
-.exercise-number { color: #9eafb8; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; line-height: 1; }
-.home-exercise-card .exercise-content { margin-top: clamp(2.6rem, 7vw, 5.2rem); }
-.home-exercise-card h3 { margin-bottom: .7rem; font-size: clamp(1.75rem, 3vw, 2.3rem); }
-.home-exercise-card .exercise-content p:last-child { font-size: .95rem; }
-.exercise-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: .7rem; margin: auto 0 1.15rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
+.home-page .container { width: min(100% - 3rem, 70rem); }
+.home-hero { display: grid; min-height: clamp(26rem, 40vw, 32rem); place-items: center; padding: 3.5rem 0; color: var(--color-ink); background-image: linear-gradient(100deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, .18) 55%, rgba(255, 255, 255, .04)), url("../hero_math_darelilmi.jpg"); background-position: center; background-repeat: no-repeat; background-size: cover; text-align: center; }
+.home-hero-copy { max-width: 46rem; margin-inline: auto; }
+.home-hero .eyebrow { margin-bottom: .9rem; color: var(--color-primary-dark); }
+.home-hero h1 { max-width: 11ch; margin: 0 auto 1rem; color: var(--color-ink); font-size: clamp(2.8rem, 5vw, 4.45rem); }
+.home-hero h1 span { color: var(--color-primary); }
+.home-description { max-width: 35rem; margin: 0 auto; color: #3e5360; font-size: clamp(1rem, 1.45vw, 1.12rem); }
+.home-catalog-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.9rem; gap: .5rem; margin-top: 1.6rem; padding: .7rem 1.05rem; border: 1px solid var(--color-primary); border-radius: var(--radius-control); color: #fff; background: var(--color-primary); font-size: .91rem; font-weight: 750; line-height: 1.15; transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease; }
+.home-catalog-link:hover { color: #fff; background: var(--color-primary-dark); border-color: var(--color-primary-dark); text-decoration: none; transform: translateY(-1px); }
+.home-catalog-link:active { transform: translateY(0); }
+.home-catalog { padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(3.75rem, 7vw, 5.5rem); }
+.home-catalog-heading { display: grid; justify-items: center; max-width: 38rem; margin: 0 auto 2.25rem; text-align: center; }
+.home-catalog-heading .eyebrow { margin: 0 0 .55rem; }
+.home-catalog-heading h2 { margin: 0; }
+.home-catalog-rule { display: block; width: 2.75rem; height: 2px; margin: 1rem 0 .9rem; background: var(--color-primary); }
+.home-catalog-heading > p:last-child { max-width: 29rem; margin: 0; color: var(--color-muted); }
+.home-exercise-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.15rem; max-width: 60rem; margin-inline: auto; }
+.home-exercise-card { display: grid; grid-template-rows: auto 1fr auto auto; min-height: 20rem; padding: clamp(1.45rem, 2.7vw, 1.9rem); border-top: 2px solid var(--color-primary); box-shadow: 0 1px 2px rgba(20, 35, 47, .03); transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+.home-exercise-card:hover { border-color: var(--color-primary-dark); box-shadow: 0 10px 24px rgba(20, 35, 47, .08); transform: translateY(-2px); }
+.home-exercise-card .exercise-card-topline { padding-bottom: .85rem; border-bottom: 1px solid #dce7ec; }
+.home-exercise-card .exercise-label { margin: 0; }
+.home-exercise-card .exercise-content { margin: 1.3rem 0 1.15rem; }
+.home-exercise-card h3 { margin-bottom: .55rem; font-size: clamp(1.65rem, 2.6vw, 2.1rem); }
+.home-exercise-card .exercise-content p:last-child { max-width: 34ch; font-size: .94rem; }
+.exercise-facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: .7rem; margin: 0 0 1.05rem; padding-top: .9rem; border-top: 1px solid var(--color-border); }
 .exercise-facts dt { color: var(--color-muted); font-size: .7rem; font-weight: 750; }
 .exercise-facts dd { margin: .16rem 0 0; color: var(--color-ink); font-size: .84rem; font-weight: 750; }
-.home-exercise-card-speed { background: #fcfaf6; }
-.home-exercise-card-speed:hover { border-color: #d0ad87; }
-.home-exercise-card-speed .exercise-number { color: #c9a47c; }
-.home-exercise-card-speed .exercise-label { color: #9b6233; }
-.home-exercise-card-speed .button-primary { background: #8d5830; }
-.home-exercise-card-speed .button-primary:hover { background: #704323; }
+.home-exercise-card .button { width: 100%; }
+.home-exercise-card-speed { border-top-color: #4f8298; background: #f7fbfc; }
+.home-exercise-card-speed:hover { border-color: #3e7187; }
+.home-exercise-card-speed .exercise-label { color: #3e7187; }
 
 .quiz-page { background: #f1f4f3; }
 .quiz-main { display: grid; min-height: calc(100vh - 4.5rem); place-items: center; padding-block: clamp(2.25rem, 6vw, 4.5rem); }
@@ -207,10 +210,11 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
   .exercise-card { grid-template-columns: auto minmax(0, 1fr); }
   .exercise-card .button { grid-column: 1 / -1; width: 100%; }
   .home-exercise-grid { grid-template-columns: 1fr; }
-  .home-exercise-card { min-height: 19rem; }
+  .home-exercise-card { min-height: 18rem; }
 }
 @media (max-width: 480px) {
   .container { width: min(100% - 2rem, 72rem); }
+  .home-page .container { width: min(100% - 2rem, 70rem); }
   .header-note, .student-link { display: none; }
   .header-actions { gap: .65rem; }
   .student-summary { max-width: 9.5rem; }
@@ -231,9 +235,9 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
   .result-actions .button { width: 100%; }
   .student-id-row { grid-template-columns: 1fr; }
   .student-id-row .button { width: 100%; }
-  .home-intro { padding-top: 3.8rem; }
-  .home-steps { grid-template-columns: 1fr; gap: .65rem; }
+  .home-hero { min-height: 29rem; padding: 3rem 0; background-position: 54% center; }
+  .home-hero h1 { font-size: clamp(2.55rem, 12vw, 3.2rem); }
   .home-exercise-card { min-height: 0; }
-  .home-exercise-card .exercise-content { margin-top: 2.5rem; }
+  .home-exercise-card .exercise-content { margin-top: 1.5rem; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
