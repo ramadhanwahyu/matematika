@@ -23,18 +23,22 @@
         <form id="student-form" class="student-form" novalidate>
           <div class="field-group">
             <label for="student-id-input">ID siswa</label>
-            <input id="student-id-input" name="student_id" type="text" autocomplete="off" maxlength="32" aria-describedby="student-id-help student-form-message" />
+            <div class="student-id-row">
+              <input id="student-id-input" name="student_id" type="text" autocomplete="off" maxlength="32" aria-describedby="student-id-help student-form-message lookup-status" />
+              <button id="search-student-button" class="button button-outline button-small" type="button" onclick="window.MathPractice.searchStudentById()">Cari</button>
+            </div>
             <p id="student-id-help" class="field-help">Contoh: S001</p>
           </div>
           <div class="field-group">
             <label for="student-name-input">Nama</label>
-            <input id="student-name-input" name="name" type="text" autocomplete="name" maxlength="80" aria-describedby="student-form-message" />
+            <input id="student-name-input" name="name" type="text" autocomplete="name" maxlength="80" readonly aria-describedby="student-form-message lookup-status" />
           </div>
           <div class="field-group">
             <label for="class-name-input">Kelas</label>
-            <input id="class-name-input" name="class_name" type="text" autocomplete="off" maxlength="64" aria-describedby="student-form-message" />
-            <p class="field-help">Contoh: X-A</p>
+            <input id="class-name-input" name="class_name" type="text" autocomplete="off" maxlength="64" readonly aria-describedby="student-form-message lookup-status" />
+            <p class="field-help">Nama dan kelas akan terisi setelah ID ditemukan.</p>
           </div>
+          <p id="lookup-status" class="lookup-status" role="status" aria-live="polite"></p>
           <p id="student-form-message" class="form-message" role="alert"></p>
           <button class="button button-primary" type="submit">Simpan dan lanjutkan</button>
         </form>

@@ -5,8 +5,21 @@ Dokumen ini menghubungkan website statis Math Practice ke satu Google Spreadshee
 ## 1. Buat Spreadsheet
 
 1. Buat Google Spreadsheet baru.
-2. Opsional: buat sheet bernama `Students` untuk pengembangan berikutnya. Tahap ini belum menulis ke sheet tersebut.
-3. Salin Spreadsheet ID dari URL. Bentuk URL-nya seperti `https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit`; bagian di antara `/d/` dan `/edit` adalah ID yang dibutuhkan.
+2. Buat sheet bernama `Students`. Baris pertama harus berisi header berikut, dengan urutan bebas tetapi ejaan sama:
+
+   ```text
+   student_id | name | class_name
+   ```
+
+3. Tambahkan satu siswa per baris, misalnya:
+
+   ```text
+   S001 | Ahmad | X-A
+   S002 | Siti | X-B
+   ```
+
+   Jadikan kolom `student_id` berformat **Plain text** agar nol di depan ID numerik tidak hilang. Setiap ID harus unik.
+4. Salin Spreadsheet ID dari URL. Bentuk URL-nya seperti `https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit`; bagian di antara `/d/` dan `/edit` adalah ID yang dibutuhkan.
 
 ## 2. Tambahkan Apps Script
 
@@ -34,7 +47,7 @@ Timestamp dibuat di Apps Script, bukan oleh browser.
 2. Pilih tipe **Web app**.
 3. Pilih **Execute as: Me** agar script dapat menulis ke Spreadsheet milik Anda.
 4. Pada akses, pilih opsi yang mengizinkan siswa membuka Web App tanpa akun Google. Nama pilihan dapat berbeda menurut jenis akun Google/Workspace; untuk GitHub Pages, umumnya diperlukan **Anyone**.
-5. Deploy, selesaikan proses otorisasi, lalu salin URL deployment yang berakhir dengan `/exec`.
+5. Deploy, selesaikan proses otorisasi, lalu salin URL deployment yang berakhir dengan `/exec`. Setelah memperbarui `Code.gs` di masa mendatang, deploy **versi baru** agar endpoint menggunakan kode terbaru.
 
 Gunakan URL `/exec`, bukan URL `/dev`; URL `/dev` hanya untuk editor Apps Script.
 
@@ -55,7 +68,7 @@ Frontend mengirim POST tanpa header kustom sehingga tetap menjadi CORS simple re
 ## 5. Uji satu data
 
 1. Buka website melalui server statis atau hosting Anda, bukan langsung dari `file://`.
-2. Isi identitas siswa.
+2. Masukkan ID siswa yang ada di sheet `Students`, lalu tekan **Cari**. Nama dan kelas harus terisi otomatis.
 3. Selesaikan latihan sampai halaman hasil.
 4. Pastikan status berubah dari “Menyimpan nilai...” menjadi “Nilai berhasil disimpan.”
 5. Buka sheet `Results` dan periksa bahwa satu baris baru muncul dengan timestamp dari Apps Script.
@@ -64,4 +77,4 @@ Jika muncul status gagal, periksa URL `/exec`, pengaturan akses deployment, Spre
 
 ## Keamanan dan batasan MVP
 
-Web App yang dapat menerima data dari website statis bukan sistem autentikasi kuat. Data identitas disimpan di `localStorage` perangkat dan payload dapat dikirim langsung oleh siapa pun yang mengetahui URL endpoint. Pendekatan ini cocok untuk MVP kelas dengan data non-sensitif, bukan untuk data pribadi sensitif, nilai resmi, atau kontrol akses guru.
+Web App yang dapat menerima data dari website statis bukan sistem autentikasi kuat. Endpoint pencarian membuat nama dan kelas dari ID yang diketahui dapat dibaca oleh pengunjung website. Data identitas disimpan di `localStorage` perangkat dan payload dapat dikirim langsung oleh siapa pun yang mengetahui URL endpoint. Pendekatan ini cocok untuk MVP kelas dengan data non-sensitif, bukan untuk data pribadi sensitif, nilai resmi, atau kontrol akses guru.

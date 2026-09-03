@@ -113,4 +113,36 @@
 
     return { payload: payload, response: responseData };
   };
+
+  window.MathPractice.findStudentById = async function findStudentById(studentId) {
+    const endpoint = window.MathPractice.config.appsScriptWebAppUrl.trim();
+    const cleanStudentId = typeof studentId === "string" ? studentId.trim() : "";
+
+    if (!cleanStudentId || !/^[A-Za-z0-9_-]+$/.test(cleanStudentId)) {
+      throw new Error("Masukkan ID siswa yang valid terlebih dahulu.");
+    }
+    if (!endpoint) {
+      throw new Error("URL Google Apps Script belum diisi. Tambahkan URL /exec pada js/common.js.");
+    }
+
+    const lookupUrl = new URL(endpoint);
+    lookupUrl.searchParams.set("action", "find_student");
+    lookupUrl.searchParams.set("student_id", cleanStudentId);
+
+    const response = await fetch(lookupUrl.toString(), {
+      method: "GET",
+      redirect: "follow",
+      credentials: "omit"
+    });
+
+    if (!response.ok) {
+      throw new Error("Server tidak dapat mencari ID siswa saat ini.");
+    }
+
+    const responseData = await response.json();
+    if (!responseData || responseData.success !== true) {
+      throw new Error(responseData && responseData.message ? responseData.message : "Server menolak pencarian ID siswa.");
+    }
+    return responseData.student || null;
+  };
 })();
