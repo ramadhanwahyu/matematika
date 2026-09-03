@@ -42,7 +42,7 @@ components:
 
 ### Creative North Star
 
-Sebuah buku kerja matematika yang rapi: tinta biru untuk struktur dan angka, satu sorotan kuning untuk menandai langkah belajar, serta ruang putih yang cukup untuk berpikir.
+Lembar kerja matematika yang terbitan profesional: tinta gelap, aturan garis tipis, aksen biru tunggal, dan ruang kosong yang membuat persamaan menjadi pusat perhatian.
 
 ### Product context and register
 
@@ -51,14 +51,14 @@ Sebuah buku kerja matematika yang rapi: tinta biru untuk struktur dan angka, sat
 - **Locale(s) and language policy:** Bahasa Indonesia untuk semua teks antarmuka; angka menggunakan digit Latin.
 - **Usage scene:** Latihan singkat di ponsel maupun laptop, sehingga navigasi dan kolom jawaban harus mudah disentuh.
 - **Register:** Hybrid. Beranda boleh ekspresif secara ringan; halaman kuis mengutamakan kejernihan dan keterbacaan.
-- **Memorable signature:** Garis sorotan kuning di belakang istilah atau angka penting, seperti stabilo pada buku latihan.
-- **Restraint:** Kartu soal, field, dan ringkasan nilai tidak memakai ornamen berlebihan.
-- **Anti-references:** Bukan dashboard korporat padat atau aplikasi anak-anak yang terlalu ramai; keduanya mengalihkan fokus dari hitungan.
+- **Memorable signature:** Persamaan pecahan ditulis seperti notasi buku teks, dengan pembilang dan penyebut pada garis pecahan yang nyata.
+- **Restraint:** Kartu, field, dan ringkasan nilai datar, berborder halus, serta tanpa ilustrasi atau gradien dekoratif.
+- **Anti-references:** Bukan dashboard korporat padat, aplikasi anak-anak yang ramai, atau landing page dengan kartu dan efek berlebihan; semuanya mengalihkan fokus dari hitungan.
 - **Token ownership/runtime mapping:** `css/style.css` adalah sumber token runtime melalui CSS custom properties. Dokumen ini mencerminkan nilai yang sama; setiap perubahan token diperbarui pada keduanya.
 
 ## Colors
 
-`primary` digunakan untuk tindakan utama dan fokus keyboard. `accent` hanya menjadi sorotan progres dan teks penting. `success` dan `danger` dipakai bersama teks, bukan sebagai satu-satunya penanda hasil. Permukaan selalu terang untuk menjaga kontras tulisan `ink`.
+`primary` digunakan untuk tindakan utama, progres, dan fokus keyboard. Permukaan terang dengan garis batas netral menjaga antarmuka terasa terukur. `success` dan `danger` selalu dipakai bersama teks, bukan sebagai satu-satunya penanda hasil.
 
 ## Typography
 
@@ -74,7 +74,7 @@ Kartu menggunakan batas tipis dan bayangan sangat lembut hanya untuk memisahkan 
 
 ## Shapes
 
-Field dan tombol memakai sudut `md`; kartu utama memakai `lg`. Bentuk tidak dibuat pill supaya tetap terasa seperti alat belajar, bukan aplikasi sosial.
+Field dan tombol memakai sudut kecil; kartu memakai sudut sedang. Bentuk tidak dibuat pill supaya tetap terasa seperti alat belajar, bukan aplikasi sosial.
 
 ## Components
 

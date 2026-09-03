@@ -3,6 +3,8 @@ const SPREADSHEET_ID = 'GANTI_DENGAN_ID_SPREADSHEET_ANDA';
 const RESULTS_SHEET_NAME = 'Results';
 const STUDENTS_SHEET_NAME = 'Students';
 const STUDENTS_HEADERS = ['student_id', 'name', 'class_name'];
+const STUDENTS_CACHE_KEY = 'students_lookup_data_v1';
+const STUDENTS_CACHE_SECONDS = 300;
 const RESULTS_HEADERS = [
   'timestamp',
   'student_id',
@@ -59,8 +61,7 @@ function doGet(e) {
     }
 
     const studentId = e.parameter.student_id || '';
-    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const student = findStudentById(spreadsheet, studentId);
+    const student = findStudentById(studentId);
     return createJsonResponse({ success: true, student: student });
   } catch (error) {
     console.error(error);
@@ -86,18 +87,11 @@ function getOrCreateResultsSheet(spreadsheet) {
   return sheet;
 }
 
-function findStudentById(spreadsheet, requestedStudentId) {
+function findStudentById(requestedStudentId) {
   const studentId = requireStudentId(requestedStudentId);
-  const sheet = spreadsheet.getSheetByName(STUDENTS_SHEET_NAME);
-  if (!sheet) {
-    throw new Error('Sheet Students belum ditemukan. Buat sheet dengan header student_id, name, class_name.');
-  }
-
-  const rows = sheet.getDataRange().getDisplayValues();
-  if (rows.length < 2) return null;
-
-  const headerIndexes = getStudentsHeaderIndexes(rows[0]);
-  const matches = rows.slice(1).filter(function(row) {
+  const studentsData = getStudentsLookupData();
+  const headerIndexes = getStudentsHeaderIndexes(studentsData.headers);
+  const matches = studentsData.rows.filter(function(row) {
     return String(row[headerIndexes.student_id]).trim().toUpperCase() === studentId.toUpperCase();
   });
 
@@ -117,6 +111,39 @@ function findStudentById(spreadsheet, requestedStudentId) {
     throw new Error('Data nama atau kelas untuk ID siswa ini belum lengkap.');
   }
   return student;
+}
+
+function getStudentsLookupData() {
+  const cache = CacheService.getScriptCache();
+  const cachedData = cache.get(STUDENTS_CACHE_KEY);
+  if (cachedData) {
+    try {
+      return JSON.parse(cachedData);
+    } catch (error) {
+      // Cache yang tidak dapat dibaca akan diganti dengan data terbaru dari sheet.
+      cache.remove(STUDENTS_CACHE_KEY);
+    }
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = spreadsheet.getSheetByName(STUDENTS_SHEET_NAME);
+  if (!sheet) {
+    throw new Error('Sheet Students belum ditemukan. Buat sheet dengan header student_id, name, class_name.');
+  }
+
+  const sheetValues = sheet.getDataRange().getDisplayValues();
+  const studentsData = {
+    headers: sheetValues[0] || [],
+    rows: sheetValues.slice(1)
+  };
+
+  try {
+    cache.put(STUDENTS_CACHE_KEY, JSON.stringify(studentsData), STUDENTS_CACHE_SECONDS);
+  } catch (error) {
+    // Pencarian tetap bekerja jika cache sedang tidak tersedia atau datanya terlalu besar.
+    console.warn('Data Students tidak dapat disimpan ke cache.', error);
+  }
+  return studentsData;
 }
 
 function getStudentsHeaderIndexes(headers) {

@@ -75,6 +75,12 @@ Frontend mengirim POST tanpa header kustom sehingga tetap menjadi CORS simple re
 
 Jika muncul status gagal, periksa URL `/exec`, pengaturan akses deployment, Spreadsheet ID, dan koneksi. Tombol **Coba simpan lagi** tersedia tanpa mengulang kuis. Jika browser tidak dapat mengonfirmasi respons jaringan, periksa sheet sebelum mencoba lagi untuk menghindari baris ganda.
 
+## Kecepatan pencarian siswa
+
+Data sheet `Students` disimpan sementara pada cache Apps Script selama 5 menit. Pencarian pertama setelah cache kosong dapat lebih lambat karena Apps Script perlu membaca Spreadsheet; pencarian berikutnya biasanya lebih cepat, termasuk untuk ID yang tidak ditemukan.
+
+Setelah mengubah data siswa di Google Sheets, perubahan dapat terlihat di website paling lambat sekitar 5 menit. Untuk perubahan yang perlu segera berlaku, tunggu cache tersebut habis sebelum melakukan pencarian ulang.
+
 ## Keamanan dan batasan MVP
 
 Web App yang dapat menerima data dari website statis bukan sistem autentikasi kuat. Endpoint pencarian membuat nama dan kelas dari ID yang diketahui dapat dibaca oleh pengunjung website. Data identitas disimpan di `localStorage` perangkat dan payload dapat dikirim langsung oleh siapa pun yang mengetahui URL endpoint. Pendekatan ini cocok untuk MVP kelas dengan data non-sensitif, bukan untuk data pribadi sensitif, nilai resmi, atau kontrol akses guru.

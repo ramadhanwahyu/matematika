@@ -52,8 +52,20 @@
     return window.MathPractice.shuffle(questionBank).slice(0, exercise.totalQuestions);
   }
 
-  function formatFraction(numerator, denominator) {
-    return `${numerator}/${denominator}`;
+  function createFractionElement(numerator, denominator) {
+    const fraction = document.createElement("span");
+    const numeratorElement = document.createElement("span");
+    const line = document.createElement("span");
+    const denominatorElement = document.createElement("span");
+
+    fraction.className = "math-fraction";
+    numeratorElement.className = "math-fraction-numerator";
+    line.className = "math-fraction-line";
+    denominatorElement.className = "math-fraction-denominator";
+    numeratorElement.textContent = numerator;
+    denominatorElement.textContent = denominator;
+    fraction.append(numeratorElement, line, denominatorElement);
+    return fraction;
   }
 
   function renderQuestion() {
@@ -62,7 +74,12 @@
     questionProgress.textContent = `Soal ${currentNumber} dari ${exercise.totalQuestions}`;
     scoreProgress.textContent = "Jawab dengan teliti";
     progressBar.style.width = `${(currentQuestionIndex / exercise.totalQuestions) * 100}%`;
-    questionExpression.textContent = `${formatFraction(question.numeratorA, question.denominatorA)} + ${formatFraction(question.numeratorB, question.denominatorB)}`;
+    questionExpression.replaceChildren(
+      createFractionElement(question.numeratorA, question.denominatorA),
+      document.createTextNode("+"),
+      createFractionElement(question.numeratorB, question.denominatorB)
+    );
+    questionExpression.setAttribute("aria-label", `${question.numeratorA} per ${question.denominatorA} ditambah ${question.numeratorB} per ${question.denominatorB}`);
     answerForm.reset();
     clearValidation();
     numeratorInput.focus();
