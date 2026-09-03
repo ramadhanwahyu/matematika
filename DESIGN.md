@@ -50,7 +50,7 @@ Lembar kerja matematika yang terbitan profesional: tinta gelap, aturan garis tip
 - **Target market(s) and evidence:** Indonesia; bahasa dan konteks latihan mengikuti permintaan proyek.
 - **Locale(s) and language policy:** Bahasa Indonesia untuk semua teks antarmuka; angka menggunakan digit Latin.
 - **Usage scene:** Latihan singkat di ponsel maupun laptop, sehingga navigasi dan kolom jawaban harus mudah disentuh.
-- **Register:** Hybrid. Beranda boleh ekspresif secara ringan; halaman kuis mengutamakan kejernihan dan keterbacaan.
+- **Register:** Hybrid. Beranda berfungsi sebagai katalog pilihan latihan yang ringkas; halaman kuis mengutamakan kejernihan dan keterbacaan.
 - **Memorable signature:** Persamaan pecahan ditulis seperti notasi buku teks, dengan pembilang dan penyebut pada garis pecahan yang nyata.
 - **Restraint:** Kartu, field, dan ringkasan nilai datar, berborder halus, serta tanpa ilustrasi atau gradien dekoratif.
 - **Anti-references:** Bukan dashboard korporat padat, aplikasi anak-anak yang ramai, atau landing page dengan kartu dan efek berlebihan; semuanya mengalihkan fokus dari hitungan.
@@ -66,7 +66,7 @@ Judul memakai `display` serif agar terasa seperti materi pelajaran; isi, kontrol
 
 ## Layout
 
-Konten berpusat pada lebar maksimum `page-max`. Spasi tepi menyusut pada ponsel, dan grid kartu berubah menjadi satu kolom. Tinggi konten mengikuti dokumen agar tidak ada area latihan yang terpotong pada layar kecil atau pembesaran teks.
+Konten berpusat pada lebar maksimum `page-max`. Beranda memakai intro ringkas, tiga langkah penggunaan yang benar-benar berurutan, lalu kartu latihan setara dalam grid dua kolom. Spasi tepi menyusut pada ponsel dan kartu berubah menjadi satu kolom. Tinggi konten mengikuti dokumen agar tidak ada area latihan yang terpotong pada layar kecil atau pembesaran teks.
 
 ## Elevation & Depth
 

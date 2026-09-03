@@ -145,4 +145,9 @@
     }
     return responseData.student || null;
   };
+
+  const savedStudent = window.MathPractice.getStudent();
+  document.querySelectorAll("[data-student-link]").forEach(function (link) {
+    if (savedStudent) link.textContent = "Ganti identitas";
+  });
 })();

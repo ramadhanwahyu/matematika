@@ -7,81 +7,77 @@
     <title>Math Practice | Latihan Matematika</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body>
+  <body class="home-page">
     <header class="site-header">
       <div class="container header-inner">
         <a class="brand" href="index.html" aria-label="Math Practice, beranda">Math<span>Practice</span></a>
-        <div class="header-actions">
-          <p class="header-note">Belajar pelan, paham benar.</p>
-          <a class="student-link" href="student.html">Identitas siswa</a>
-        </div>
+        <nav class="header-actions" aria-label="Navigasi utama">
+          <p class="header-note">Latihan matematika</p>
+          <a class="student-link" data-student-link href="student.html">Identitas siswa</a>
+        </nav>
       </div>
     </header>
 
     <main>
-      <section class="hero">
-        <div class="container hero-layout">
-          <div class="hero-copy">
-            <p class="eyebrow">Ruang latihan matematika</p>
-            <h1>Berlatih dengan <span>arah yang jelas.</span></h1>
-            <p class="hero-description">Selesaikan satu konsep dalam satu sesi singkat. Tanpa gangguan, dengan hasil yang langsung tercatat.</p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="student.html?next=latihan/penjumlahan-pecahan.html">Mulai latihan</a>
-              <a class="text-link" href="#latihan">Lihat materi tersedia <span aria-hidden="true">↓</span></a>
-            </div>
-          </div>
-          <aside class="hero-panel" aria-label="Ringkasan latihan pertama">
-            <p class="panel-label">Mulai dari sini</p>
-            <h2>Penjumlahan Pecahan</h2>
-            <p>Latihan menyamakan penyebut, mencari KPK, dan menyederhanakan hasil.</p>
-            <dl class="panel-details">
-              <div><dt>Format</dt><dd>10 soal acak</dd></div>
-              <div><dt>Jawaban</dt><dd>Pecahan terbuka</dd></div>
-            </dl>
-          </aside>
+      <section class="home-intro">
+        <div class="container">
+          <p class="eyebrow">Latihan matematika</p>
+          <h1>Pilih latihan, <span>mulai berhitung.</span></h1>
+          <p class="home-description">Latihan singkat untuk menguatkan konsep dan melihat hasil setiap sesi.</p>
+          <ol class="home-steps" aria-label="Cara menggunakan Math Practice">
+            <li><span>01</span><p>Cari ID siswa</p></li>
+            <li><span>02</span><p>Pilih latihan</p></li>
+            <li><span>03</span><p>Kerjakan sampai selesai</p></li>
+          </ol>
         </div>
       </section>
 
-      <section id="latihan" class="exercise-section container" aria-labelledby="exercise-heading">
+      <section id="latihan" class="home-catalog container" aria-labelledby="exercise-heading">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Pilih materi</p>
             <h2 id="exercise-heading">Latihan tersedia</h2>
           </div>
-          <p>Mulai dari satu latihan dasar, lalu tambahkan materi baru secara bertahap.</p>
+          <p>Pilih satu latihan sesuai fokusmu hari ini.</p>
         </div>
 
-        <div class="exercise-list">
-        <article class="card exercise-card">
-          <div class="exercise-icon" aria-hidden="true">
-            <span>⅓</span>
-            <small>+</small>
-            <span>¼</span>
+        <div class="home-exercise-grid">
+        <article class="card home-exercise-card">
+          <div class="exercise-card-topline">
+            <p class="exercise-label">Pecahan · Dasar–menengah</p>
+            <span class="exercise-number" aria-hidden="true">01</span>
           </div>
           <div class="exercise-content">
-            <p class="exercise-label">Pecahan · Dasar–menengah</p>
             <h3>Penjumlahan Pecahan</h3>
             <p>Latih menyamakan penyebut, mencari KPK, dan menyederhanakan hasil penjumlahan.</p>
           </div>
-          <a class="button button-outline" href="student.html?next=latihan/penjumlahan-pecahan.html">Buka latihan <span aria-hidden="true">→</span></a>
+          <dl class="exercise-facts">
+            <div><dt>Format</dt><dd>10 soal acak</dd></div>
+            <div><dt>Waktu</dt><dd>Tanpa batas</dd></div>
+          </dl>
+          <a class="button button-primary" href="student.html?next=latihan/penjumlahan-pecahan.html">Mulai latihan <span aria-hidden="true">→</span></a>
         </article>
-        <article class="card exercise-card">
-          <div class="exercise-icon exercise-icon-multiply" aria-hidden="true">
-            <span>6</span><small>×</small><span>8</span>
+        <article class="card home-exercise-card home-exercise-card-speed">
+          <div class="exercise-card-topline">
+            <p class="exercise-label">Perkalian · Kecepatan dasar</p>
+            <span class="exercise-number" aria-hidden="true">02</span>
           </div>
           <div class="exercise-content">
-            <p class="exercise-label">Perkalian · Kecepatan dasar</p>
             <h3>Perkalian Cepat</h3>
             <p>Jawab sebanyak mungkin soal perkalian dasar dalam waktu satu menit.</p>
           </div>
-          <a class="button button-outline" href="student.html?next=latihan/perkalian.html">Buka latihan <span aria-hidden="true">→</span></a>
+          <dl class="exercise-facts">
+            <div><dt>Format</dt><dd>Soal berlanjut</dd></div>
+            <div><dt>Waktu</dt><dd>1 menit</dd></div>
+          </dl>
+          <a class="button button-primary" href="student.html?next=latihan/perkalian.html">Mulai latihan <span aria-hidden="true">→</span></a>
         </article>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="container"><p>Math Practice · Belajar matematika selangkah demi selangkah.</p></div>
+      <div class="container"><p>Math Practice · Latihan terarah, hasil tercatat.</p></div>
     </footer>
     <script src="js/common.js"></script>
   </body>
