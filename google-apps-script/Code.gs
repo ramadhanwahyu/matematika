@@ -173,8 +173,8 @@ function validateResultPayload(payload) {
     exercise_name: requireText(payload.exercise_name, 'exercise_name', 150),
     correct: requireInteger(payload.correct, 'correct', 0, 1000),
     incorrect: requireInteger(payload.incorrect, 'incorrect', 0, 1000),
-    total: requireInteger(payload.total, 'total', 1, 1000),
-    score: requireInteger(payload.score, 'score', 0, 100)
+    total: requireInteger(payload.total, 'total', 0, 1000),
+    score: requireInteger(payload.score, 'score', 0, 10000)
   };
 
   requireStudentId(result.student_id);

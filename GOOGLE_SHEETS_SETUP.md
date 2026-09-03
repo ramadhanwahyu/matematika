@@ -41,6 +41,8 @@ timestamp | student_id | student_name | class_name | exercise_id | exercise_name
 
 Timestamp dibuat di Apps Script, bukan oleh browser.
 
+Kolom `score` mengikuti jenis latihan. Pada Penjumlahan Pecahan nilainya 0–100, sedangkan pada Perkalian Cepat nilainya adalah jumlah jawaban benar sehingga dapat melebihi 100.
+
 ## 3. Deploy sebagai Web App
 
 1. Pilih **Deploy > New deployment**.

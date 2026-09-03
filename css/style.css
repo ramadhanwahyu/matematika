@@ -66,12 +66,15 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .panel-details dt, .session-details dt { color: var(--color-muted); font-size: .72rem; font-weight: 750; }
 .panel-details dd, .session-details dd { margin: .15rem 0 0; font-size: .87rem; font-weight: 750; }
 .exercise-section { padding-bottom: clamp(4.5rem, 9vw, 7rem); }
+.exercise-list { display: grid; gap: 1rem; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--color-border); }
 .section-heading > p { max-width: 24rem; margin: 0; color: var(--color-muted); }
 .card { border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
 .exercise-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(1rem, 3vw, 2rem); padding: clamp(1.35rem, 3vw, 2rem); }
 .exercise-icon { display: flex; align-items: center; gap: .22rem; min-width: 6rem; padding: .8rem .9rem; border: 1px solid #cfe1eb; border-radius: var(--radius-control); color: var(--color-primary-dark); background: var(--color-primary-soft); font-family: var(--font-display); font-size: 1.55rem; font-weight: 700; }
 .exercise-icon small { color: var(--color-primary); font-family: var(--font-sans); font-size: 1rem; }
+.exercise-icon-multiply { color: #6d3f1f; border-color: #e8d5bf; background: #fbf3e9; }
+.exercise-icon-multiply small { color: #a76632; }
 .exercise-label { margin: 0 0 .35rem; color: var(--color-primary); font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .exercise-content p:last-child { max-width: 43rem; margin: 0; color: var(--color-muted); }
 .site-footer { padding: 1.4rem 0; border-top: 1px solid var(--color-border); color: var(--color-muted); font-size: .82rem; }
@@ -101,8 +104,8 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .math-fraction-denominator { padding: .12em .15em 0; }
 .equals-sign { flex: 0 0 auto; color: var(--color-muted); font-family: var(--font-display); font-size: clamp(1.75rem, 6vw, 3.2rem); line-height: 1; }
 .answer-fraction-fieldset { flex: 0 0 auto; min-width: 0; margin: 0; padding: 0; border: 0; }
-.answer-fraction-inputs { display: grid; grid-template-rows: 2rem 1px 2rem; width: 3.5rem; }
-.fraction-answer-input { width: 3.5rem; height: 2rem; padding: .08rem .2rem; border: 1px solid var(--color-rule); border-radius: 0; color: var(--color-ink); background: #fff; font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; line-height: 1; text-align: center; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.answer-fraction-inputs { display: grid; grid-template-rows: 3.65rem 2px 3.65rem; width: 5.25rem; }
+.fraction-answer-input { width: 5.25rem; height: 3.65rem; padding: .08rem .2rem; border: 1px solid var(--color-rule); border-radius: 0; color: var(--color-ink); background: #fff; font-family: var(--font-display); font-size: 3.1rem; font-weight: 700; line-height: 1; text-align: center; transition: border-color 150ms ease, box-shadow 150ms ease; }
 .fraction-answer-input:first-of-type { border-radius: var(--radius-control) var(--radius-control) 0 0; border-bottom: 0; }
 .fraction-answer-input:last-of-type { border-radius: 0 0 var(--radius-control) var(--radius-control); border-top: 0; }
 .fraction-answer-input:hover { border-color: var(--color-primary); }
@@ -152,6 +155,20 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .save-status[data-state="error"] { color: var(--color-danger); }
 .result-card .text-button { margin-top: .3rem; }
 
+.speed-quiz-card { width: min(100%, 38rem); text-align: center; }
+.speed-topline { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: .8rem; border-bottom: 1px solid var(--color-border); }
+.timer-label { margin: 0; color: var(--color-muted); font-size: .78rem; font-weight: 750; text-transform: uppercase; letter-spacing: .08em; }
+.timer-value { margin: 1rem 0 0; color: var(--color-primary-dark); font-family: var(--font-display); font-size: clamp(3.2rem, 10vw, 5.5rem); font-weight: 700; letter-spacing: -.07em; line-height: .9; }
+.speed-answer-form { padding-top: clamp(2rem, 6vw, 3.25rem); }
+.multiplication-expression { margin: 0 0 1.4rem; font-family: var(--font-display); font-size: clamp(3rem, 10vw, 5.5rem); font-weight: 700; letter-spacing: -.06em; line-height: 1; }
+.speed-answer-input { width: min(100%, 14rem); min-height: 4rem; padding: .4rem .7rem; border: 1px solid var(--color-rule); border-radius: var(--radius-control); color: var(--color-ink); background: #fff; font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3rem); font-weight: 700; line-height: 1; text-align: center; }
+.speed-answer-input:hover { border-color: var(--color-primary); }
+.speed-answer-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(31, 103, 151, .14); outline: none; }
+.speed-answer-input[aria-invalid="true"] { border-color: var(--color-danger); background: #fff9f8; }
+.speed-message { margin: .45rem 0; }
+.speed-answer-form .button { width: min(100%, 14rem); margin-top: .35rem; }
+.speed-score-orbit { border-bottom-color: #a76632; }
+
 @media (max-width: 700px) {
   .hero-layout { grid-template-columns: 1fr; gap: 3.5rem; }
   .hero-panel { max-width: 31rem; }
@@ -175,7 +192,8 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
   .equation-row { gap: .25rem; }
   .fraction-expression { gap: .35rem; font-size: clamp(1.6rem, 9vw, 2.2rem); }
   .equals-sign { font-size: 1.8rem; }
-  .answer-fraction-inputs, .fraction-answer-input { width: 3.1rem; }
+  .answer-fraction-inputs { grid-template-rows: 2.55rem 2px 2.55rem; width: 3.8rem; }
+  .fraction-answer-input { width: 3.8rem; height: 2.55rem; font-size: 2.1rem; }
   .result-details { grid-template-columns: 1fr; }
   .result-details div + div { border-top: 1px solid var(--color-border); border-left: 0; }
   .result-actions .button { width: 100%; }

@@ -96,7 +96,7 @@ Transisi ringan dipakai untuk hover dan perubahan tampilan. Semua animasi dimati
 
 ### Content and data visualization
 
-Bahasa antarmuka langsung dan suportif: instruksi menjelaskan langkah koreksi, bukan menyalahkan siswa. Nilai selalu ditampilkan dalam angka utuh 0–100.
+Bahasa antarmuka langsung dan suportif: instruksi menjelaskan langkah koreksi, bukan menyalahkan siswa. Nilai pecahan ditampilkan 0–100, sedangkan latihan kecepatan menampilkan jumlah poin secara utuh dengan timer yang selalu terlihat.
 
 ## Do's and Don'ts
 
