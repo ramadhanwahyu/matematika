@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Latihan 10 soal acak penyederhanaan eksponen." />
+    <title>Eksponen | Math Practice</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="quiz-page">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html" aria-label="Math Practice, beranda">Math<span>Practice</span></a>
+        <div class="header-actions">
+          <p id="student-summary" class="student-summary"></p>
+          <a class="back-link" href="../index.html">← Kembali ke beranda</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="quiz-main container">
+      <section id="start-screen" class="card quiz-card intro-card" aria-labelledby="quiz-title">
+        <p class="eyebrow">Latihan 03 · Aljabar</p>
+        <h1 id="quiz-title">Eksponen</h1>
+        <p class="intro-text">Sederhanakan bentuk eksponen dengan menerapkan aturan perkalian, pembagian, dan pangkat bertingkat.</p>
+        <dl class="session-details">
+          <div><dt>Jumlah soal</dt><dd>10 soal acak</dd></div>
+          <div><dt>Bentuk jawaban</dt><dd>Bilangan atau pecahan</dd></div>
+        </dl>
+        <button class="button button-primary" type="button" onclick="window.MathPractice.startExponentExercise()">Mulai latihan</button>
+      </section>
+
+      <section id="quiz-screen" class="card quiz-card exponent-quiz-card is-hidden" aria-live="polite" aria-labelledby="question-progress">
+        <div class="quiz-topline">
+          <p id="question-progress" class="question-progress">Soal 1 dari 10</p>
+          <p id="score-progress" class="score-progress">Sederhanakan dengan teliti</p>
+        </div>
+        <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+        <form id="answer-form" class="answer-form" novalidate>
+          <div class="question-area exponent-question-area">
+            <p class="question-prompt">Sederhanakan bentuk berikut.</p>
+            <div class="exponent-equation-row">
+              <div id="question-expression" class="exponent-expression" aria-label="Soal eksponen"></div>
+              <span class="equals-sign" aria-hidden="true">=</span>
+              <label class="sr-only" for="answer-input">Jawaban eksponen</label>
+              <input id="answer-input" class="exponent-answer-input" name="answer" type="text" inputmode="text" autocomplete="off" maxlength="12" aria-describedby="answer-help answer-message" />
+            </div>
+          </div>
+          <p id="answer-help" class="field-help answer-help">Masukkan bilangan bulat atau pecahan sederhana, misalnya 8 atau 1/3.</p>
+          <p id="answer-message" class="form-message" role="alert"></p>
+          <button class="button button-primary" type="submit">Jawab dan lanjutkan</button>
+        </form>
+      </section>
+
+      <section id="result-screen" class="card quiz-card result-card is-hidden" aria-labelledby="result-title">
+        <p class="eyebrow">Sesi selesai</p>
+        <h1 id="result-title" tabindex="-1">Hasil latihanmu</h1>
+        <div class="score-orbit" aria-label="Nilai akhir"><strong id="final-score">0</strong><span>/100</span></div>
+        <p id="result-summary" class="result-summary"></p>
+        <div class="result-details">
+          <div><span id="correct-count">0</span><p>Jawaban benar</p></div>
+          <div><span id="incorrect-count">0</span><p>Jawaban salah</p></div>
+          <div><span id="total-count">10</span><p>Total soal</p></div>
+        </div>
+        <div class="result-actions">
+          <button class="button button-primary" type="button" onclick="window.MathPractice.startExponentExercise()">Ulangi latihan</button>
+          <a class="button button-outline" href="../index.html">Kembali ke beranda</a>
+        </div>
+        <div id="save-status" class="save-status" role="status" aria-live="polite"></div>
+        <button id="retry-save-button" class="text-button is-hidden" type="button" onclick="window.MathPractice.retryExponentResult()">Coba simpan lagi</button>
+      </section>
+    </main>
+
+    <script src="../js/common.js"></script>
+    <script src="../js/eksponen.js"></script>
+  </body>
+</html>
