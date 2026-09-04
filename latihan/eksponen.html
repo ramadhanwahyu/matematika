@@ -44,9 +44,13 @@
           <p id="answer-options-title" class="answer-options-title">Pilih jawaban yang tepat.</p>
           <div id="answer-options" class="exponent-options" role="group" aria-labelledby="answer-options-title"></div>
         </section>
+        <div class="quiz-navigation" aria-label="Navigasi soal">
+          <button id="previous-button" class="button button-outline" type="button" onclick="window.MathPractice.showPreviousExponentQuestion()">← Soal sebelumnya</button>
+          <button id="next-button" class="button button-primary" type="button" onclick="window.MathPractice.showNextExponentQuestion()" disabled>Soal berikutnya →</button>
+        </div>
       </section>
 
-      <section id="result-screen" class="card quiz-card result-card is-hidden" aria-labelledby="result-title">
+      <section id="result-screen" class="card quiz-card result-card exponent-result-card is-hidden" aria-labelledby="result-title">
         <p class="eyebrow">Sesi selesai</p>
         <h1 id="result-title" tabindex="-1">Hasil latihanmu</h1>
         <div class="score-orbit" aria-label="Nilai akhir"><strong id="final-score">0</strong><span>/100</span></div>
@@ -56,6 +60,13 @@
           <div><span id="incorrect-count">0</span><p>Jawaban salah</p></div>
           <div><span id="total-count">10</span><p>Total soal</p></div>
         </div>
+        <section class="result-review" aria-labelledby="review-title">
+          <div class="result-review-heading">
+            <p class="eyebrow">Tinjauan jawaban</p>
+            <h2 id="review-title">Periksa kembali setiap soal</h2>
+          </div>
+          <div id="result-review-list" class="result-review-list"></div>
+        </section>
         <div class="result-actions">
           <button class="button button-primary" type="button" onclick="window.MathPractice.startExponentExercise()">Ulangi latihan</button>
           <a class="button button-outline" href="../index.html">Kembali ke beranda</a>

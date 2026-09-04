@@ -88,7 +88,7 @@ Tombol utama berwarna `primary`; tombol sekunder hanya berbingkai. Tombol memili
 
 ### Forms and overlays
 
-Semua field memakai label nyata, bantuan input, dan validasi inline. Form menggunakan validasi JavaScript sendiri sehingga pesannya konsisten dalam bahasa Indonesia. Pilihan ganda memakai tombol native yang tersusun dalam grup jawaban, sehingga dapat dipilih dengan mouse, sentuhan, atau keyboard. Pencarian ID siswa memakai status pending, berhasil, dan gagal dalam teks; nama dan kelas hanya-baca setelah ditemukan dari sheet. Status simpan hasil berada di bawah tindakan hasil: pending, berhasil, dan gagal selalu ditulis dalam teks; kegagalan menyediakan tindakan coba lagi tanpa menghapus nilai.
+Semua field memakai label nyata, bantuan input, dan validasi inline. Form menggunakan validasi JavaScript sendiri sehingga pesannya konsisten dalam bahasa Indonesia. Pilihan ganda memakai tombol native yang tersusun dalam grup jawaban, sehingga dapat dipilih dengan mouse, sentuhan, atau keyboard. Pilihan tersimpan sebelum siswa berpindah nomor, dapat ditinjau kembali, dan dirangkum setelah sesi selesai dengan status serta jawaban yang benar. Pencarian ID siswa memakai status pending, berhasil, dan gagal dalam teks; nama dan kelas hanya-baca setelah ditemukan dari sheet. Status simpan hasil berada di bawah tindakan hasil: pending, berhasil, dan gagal selalu ditulis dalam teks; kegagalan menyediakan tindakan coba lagi tanpa menghapus nilai.
 
 ### Motion
 
