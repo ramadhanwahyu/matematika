@@ -7,41 +7,65 @@
     totalQuestions: 10
   };
 
-  // Markup di bank soal bersifat statis dan hanya dipakai untuk menampilkan notasi matematika.
+  function number(value) {
+    return `<mn>${value}</mn>`;
+  }
+
+  function exponent(value) {
+    return value < 0 ? `<mrow><mo>−</mo>${number(Math.abs(value))}</mrow>` : number(value);
+  }
+
+  function power(base, value) {
+    const baseExpression = typeof base === "number" ? number(base) : base;
+    return `<msup>${baseExpression}${exponent(value)}</msup>`;
+  }
+
+  function group(expression) {
+    return `<mrow><mo>(</mo>${expression}<mo>)</mo></mrow>`;
+  }
+
+  function multiply() {
+    return `<mrow>${Array.from(arguments).join("<mo>×</mo>")}</mrow>`;
+  }
+
+  function fraction(numerator, denominator) {
+    return `<math display="block"><mfrac><mrow>${numerator}</mrow><mrow>${denominator}</mrow></mfrac></math>`;
+  }
+
+  // Setiap soal membawa empat hasil unik: satu jawaban benar dan tiga pengalih yang masuk akal.
   const questionBank = [
-    { numerator: "(2<sup>5</sup> × 2<sup>3</sup>)", denominator: "2<sup>4</sup>", label: "(2 pangkat 5 kali 2 pangkat 3) dibagi 2 pangkat 4", answerNumerator: 16, answerDenominator: 1 },
-    { numerator: "(3<sup>4</sup> × 3<sup>2</sup>)", denominator: "(3<sup>2</sup>)<sup>2</sup>", label: "(3 pangkat 4 kali 3 pangkat 2) dibagi (3 pangkat 2) pangkat 2", answerNumerator: 9, answerDenominator: 1 },
-    { numerator: "(5<sup>3</sup> × 5<sup>−2</sup>)", denominator: "5<sup>−1</sup>", label: "(5 pangkat 3 kali 5 pangkat negatif 2) dibagi 5 pangkat negatif 1", answerNumerator: 25, answerDenominator: 1 },
-    { numerator: "((2<sup>3</sup>)<sup>2</sup> × 2<sup>−2</sup>)", denominator: "2<sup>3</sup>", label: "((2 pangkat 3) pangkat 2 kali 2 pangkat negatif 2) dibagi 2 pangkat 3", answerNumerator: 2, answerDenominator: 1 },
-    { numerator: "(3<sup>2</sup>)<sup>3</sup>", denominator: "(3<sup>4</sup> × 3<sup>−1</sup>)", label: "(3 pangkat 2) pangkat 3 dibagi (3 pangkat 4 kali 3 pangkat negatif 1)", answerNumerator: 27, answerDenominator: 1 },
-    { numerator: "(2<sup>4</sup> × 4<sup>2</sup>)", denominator: "2<sup>5</sup>", label: "(2 pangkat 4 kali 4 pangkat 2) dibagi 2 pangkat 5", answerNumerator: 8, answerDenominator: 1 },
-    { numerator: "(9<sup>2</sup> × 3<sup>−1</sup>)", denominator: "3<sup>2</sup>", label: "(9 pangkat 2 kali 3 pangkat negatif 1) dibagi 3 pangkat 2", answerNumerator: 3, answerDenominator: 1 },
-    { numerator: "(8<sup>2</sup> × 2<sup>−3</sup>)", denominator: "2<sup>2</sup>", label: "(8 pangkat 2 kali 2 pangkat negatif 3) dibagi 2 pangkat 2", answerNumerator: 2, answerDenominator: 1 },
-    { numerator: "(4<sup>3</sup> × 2<sup>−2</sup>)", denominator: "8", label: "(4 pangkat 3 kali 2 pangkat negatif 2) dibagi 8", answerNumerator: 2, answerDenominator: 1 },
-    { numerator: "(27 × 3<sup>2</sup>)", denominator: "(3<sup>2</sup>)<sup>2</sup>", label: "(27 kali 3 pangkat 2) dibagi (3 pangkat 2) pangkat 2", answerNumerator: 3, answerDenominator: 1 },
-    { numerator: "((2<sup>2</sup>)<sup>3</sup> × 4<sup>−1</sup>)", denominator: "2<sup>−1</sup>", label: "((2 pangkat 2) pangkat 3 kali 4 pangkat negatif 1) dibagi 2 pangkat negatif 1", answerNumerator: 32, answerDenominator: 1 },
-    { numerator: "(25<sup>2</sup> × 5<sup>−3</sup>)", denominator: "5<sup>0</sup>", label: "(25 pangkat 2 kali 5 pangkat negatif 3) dibagi 5 pangkat 0", answerNumerator: 5, answerDenominator: 1 },
-    { numerator: "((3<sup>3</sup>)<sup>2</sup> × 9<sup>−1</sup>)", denominator: "3<sup>2</sup>", label: "((3 pangkat 3) pangkat 2 kali 9 pangkat negatif 1) dibagi 3 pangkat 2", answerNumerator: 9, answerDenominator: 1 },
-    { numerator: "(16<sup>2</sup> × 2<sup>−3</sup>)", denominator: "4<sup>2</sup>", label: "(16 pangkat 2 kali 2 pangkat negatif 3) dibagi 4 pangkat 2", answerNumerator: 2, answerDenominator: 1 },
-    { numerator: "(5<sup>2</sup>)<sup>2</sup>", denominator: "(25 × 5<sup>−1</sup>)", label: "(5 pangkat 2) pangkat 2 dibagi (25 kali 5 pangkat negatif 1)", answerNumerator: 125, answerDenominator: 1 },
-    { numerator: "(8<sup>2</sup> × 4<sup>−1</sup>)", denominator: "2<sup>−2</sup>", label: "(8 pangkat 2 kali 4 pangkat negatif 1) dibagi 2 pangkat negatif 2", answerNumerator: 64, answerDenominator: 1 },
-    { numerator: "(9<sup>3</sup> × 3<sup>−4</sup>)", denominator: "27", label: "(9 pangkat 3 kali 3 pangkat negatif 4) dibagi 27", answerNumerator: 1, answerDenominator: 3 },
-    { numerator: "((4<sup>2</sup>)<sup>2</sup> × 2<sup>−3</sup>)", denominator: "2<sup>2</sup>", label: "((4 pangkat 2) pangkat 2 kali 2 pangkat negatif 3) dibagi 2 pangkat 2", answerNumerator: 8, answerDenominator: 1 },
-    { numerator: "(27<sup>2</sup> × 9<sup>−1</sup>)", denominator: "3<sup>−2</sup>", label: "(27 pangkat 2 kali 9 pangkat negatif 1) dibagi 3 pangkat negatif 2", answerNumerator: 729, answerDenominator: 1 },
-    { numerator: "((2<sup>3</sup>)<sup>3</sup> × 4<sup>−2</sup>)", denominator: "2<sup>−1</sup>", label: "((2 pangkat 3) pangkat 3 kali 4 pangkat negatif 2) dibagi 2 pangkat negatif 1", answerNumerator: 64, answerDenominator: 1 }
+    { mathml: fraction(multiply(power(2, 5), power(2, 3)), power(2, 4)), label: "(2 pangkat 5 kali 2 pangkat 3) dibagi 2 pangkat 4", answer: "16", distractors: ["8", "32", "4"] },
+    { mathml: fraction(multiply(power(3, 4), power(3, 2)), power(group(power(3, 2)), 2)), label: "(3 pangkat 4 kali 3 pangkat 2) dibagi (3 pangkat 2) pangkat 2", answer: "9", distractors: ["3", "27", "1"] },
+    { mathml: fraction(multiply(power(5, 3), power(5, -2)), power(5, -1)), label: "(5 pangkat 3 kali 5 pangkat negatif 2) dibagi 5 pangkat negatif 1", answer: "25", distractors: ["5", "125", "1"] },
+    { mathml: fraction(multiply(power(group(power(2, 3)), 2), power(2, -2)), power(2, 3)), label: "((2 pangkat 3) pangkat 2 kali 2 pangkat negatif 2) dibagi 2 pangkat 3", answer: "2", distractors: ["4", "8", "1"] },
+    { mathml: fraction(power(group(power(3, 2)), 3), group(multiply(power(3, 4), power(3, -1)))), label: "(3 pangkat 2) pangkat 3 dibagi (3 pangkat 4 kali 3 pangkat negatif 1)", answer: "27", distractors: ["9", "81", "3"] },
+    { mathml: fraction(multiply(power(2, 4), power(4, 2)), power(2, 5)), label: "(2 pangkat 4 kali 4 pangkat 2) dibagi 2 pangkat 5", answer: "8", distractors: ["4", "16", "2"] },
+    { mathml: fraction(multiply(power(9, 2), power(3, -1)), power(3, 2)), label: "(9 pangkat 2 kali 3 pangkat negatif 1) dibagi 3 pangkat 2", answer: "3", distractors: ["1", "9", "27"] },
+    { mathml: fraction(multiply(power(8, 2), power(2, -3)), power(2, 2)), label: "(8 pangkat 2 kali 2 pangkat negatif 3) dibagi 2 pangkat 2", answer: "2", distractors: ["4", "8", "1"] },
+    { mathml: fraction(multiply(power(4, 3), power(2, -2)), number(8)), label: "(4 pangkat 3 kali 2 pangkat negatif 2) dibagi 8", answer: "2", distractors: ["4", "8", "1"] },
+    { mathml: fraction(multiply(number(27), power(3, 2)), power(group(power(3, 2)), 2)), label: "(27 kali 3 pangkat 2) dibagi (3 pangkat 2) pangkat 2", answer: "3", distractors: ["1", "9", "27"] },
+    { mathml: fraction(multiply(power(group(power(2, 2)), 3), power(4, -1)), power(2, -1)), label: "((2 pangkat 2) pangkat 3 kali 4 pangkat negatif 1) dibagi 2 pangkat negatif 1", answer: "32", distractors: ["16", "64", "8"] },
+    { mathml: fraction(multiply(power(25, 2), power(5, -3)), power(5, 0)), label: "(25 pangkat 2 kali 5 pangkat negatif 3) dibagi 5 pangkat 0", answer: "5", distractors: ["1", "25", "125"] },
+    { mathml: fraction(multiply(power(group(power(3, 3)), 2), power(9, -1)), power(3, 2)), label: "((3 pangkat 3) pangkat 2 kali 9 pangkat negatif 1) dibagi 3 pangkat 2", answer: "9", distractors: ["3", "27", "81"] },
+    { mathml: fraction(multiply(power(16, 2), power(2, -3)), power(4, 2)), label: "(16 pangkat 2 kali 2 pangkat negatif 3) dibagi 4 pangkat 2", answer: "2", distractors: ["4", "8", "1"] },
+    { mathml: fraction(power(group(power(5, 2)), 2), group(multiply(number(25), power(5, -1)))), label: "(5 pangkat 2) pangkat 2 dibagi (25 kali 5 pangkat negatif 1)", answer: "125", distractors: ["25", "625", "5"] },
+    { mathml: fraction(multiply(power(8, 2), power(4, -1)), power(2, -2)), label: "(8 pangkat 2 kali 4 pangkat negatif 1) dibagi 2 pangkat negatif 2", answer: "64", distractors: ["16", "32", "128"] },
+    { mathml: fraction(multiply(power(9, 3), power(3, -4)), number(27)), label: "(9 pangkat 3 kali 3 pangkat negatif 4) dibagi 27", answer: "1/3", distractors: ["1/9", "3", "1/27"] },
+    { mathml: fraction(multiply(power(group(power(4, 2)), 2), power(2, -3)), power(2, 2)), label: "((4 pangkat 2) pangkat 2 kali 2 pangkat negatif 3) dibagi 2 pangkat 2", answer: "8", distractors: ["4", "16", "2"] },
+    { mathml: fraction(multiply(power(27, 2), power(9, -1)), power(3, -2)), label: "(27 pangkat 2 kali 9 pangkat negatif 1) dibagi 3 pangkat negatif 2", answer: "729", distractors: ["81", "243", "2187"] },
+    { mathml: fraction(multiply(power(group(power(2, 3)), 3), power(4, -2)), power(2, -1)), label: "((2 pangkat 3) pangkat 3 kali 4 pangkat negatif 2) dibagi 2 pangkat negatif 1", answer: "64", distractors: ["32", "128", "16"] }
   ];
 
+  const mathNamespace = "http://www.w3.org/1998/Math/MathML";
   const startScreen = document.getElementById("start-screen");
   const quizScreen = document.getElementById("quiz-screen");
   const resultScreen = document.getElementById("result-screen");
   const screens = [startScreen, quizScreen, resultScreen];
-  const answerForm = document.getElementById("answer-form");
-  const answerInput = document.getElementById("answer-input");
   const questionProgress = document.getElementById("question-progress");
   const scoreProgress = document.getElementById("score-progress");
   const progressBar = document.getElementById("progress-bar");
   const questionExpression = document.getElementById("question-expression");
-  const answerMessage = document.getElementById("answer-message");
+  const answerOptions = document.getElementById("answer-options");
   const saveStatus = document.getElementById("save-status");
   const retrySaveButton = document.getElementById("retry-save-button");
   const studentSummary = document.getElementById("student-summary");
@@ -63,75 +87,62 @@
     return window.MathPractice.shuffle(questionBank).slice(0, exercise.totalQuestions);
   }
 
-  function createExponentFraction(question) {
-    const fraction = document.createElement("span");
-    const numerator = document.createElement("span");
-    const line = document.createElement("span");
-    const denominator = document.createElement("span");
+  function createMathElement(tagName, text) {
+    const element = document.createElementNS(mathNamespace, tagName);
+    if (text) element.textContent = text;
+    return element;
+  }
 
-    fraction.className = "exponent-fraction";
-    numerator.className = "exponent-numerator";
-    line.className = "exponent-fraction-line";
-    denominator.className = "exponent-denominator";
-    numerator.innerHTML = question.numerator;
-    denominator.innerHTML = question.denominator;
-    fraction.append(numerator, line, denominator);
-    return fraction;
+  function createAnswerMath(answer) {
+    const math = createMathElement("math");
+    const [numerator, denominator] = answer.split("/");
+
+    math.setAttribute("aria-hidden", "true");
+    if (!denominator) {
+      math.append(createMathElement("mn", numerator));
+      return math;
+    }
+
+    const answerFraction = createMathElement("mfrac");
+    answerFraction.append(createMathElement("mn", numerator), createMathElement("mn", denominator));
+    math.append(answerFraction);
+    return math;
+  }
+
+  function createOptionButton(answer, index, question) {
+    const option = document.createElement("button");
+    const key = document.createElement("span");
+    const answerValue = document.createElement("span");
+    const optionLetter = String.fromCharCode(65 + index);
+
+    option.className = "exponent-option";
+    option.type = "button";
+    option.setAttribute("aria-label", `Pilihan ${optionLetter}: ${answer}`);
+    key.className = "exponent-option-key";
+    key.textContent = optionLetter;
+    answerValue.className = "exponent-option-value";
+    answerValue.append(createAnswerMath(answer));
+    option.append(key, answerValue);
+    option.addEventListener("click", function () {
+      submitAnswer(answer, question);
+    });
+    return option;
   }
 
   function renderQuestion() {
     const question = sessionQuestions[currentQuestionIndex];
     const currentNumber = currentQuestionIndex + 1;
+    const options = window.MathPractice.shuffle([question.answer].concat(question.distractors));
+
     questionProgress.textContent = `Soal ${currentNumber} dari ${exercise.totalQuestions}`;
-    scoreProgress.textContent = "Sederhanakan dengan teliti";
+    scoreProgress.textContent = "Pilih satu jawaban";
     progressBar.style.width = `${(currentQuestionIndex / exercise.totalQuestions) * 100}%`;
-    questionExpression.replaceChildren(createExponentFraction(question));
+    questionExpression.innerHTML = question.mathml;
     questionExpression.setAttribute("aria-label", question.label);
-    answerForm.reset();
-    clearValidation();
-    answerInput.focus();
-  }
-
-  function clearValidation() {
-    answerMessage.textContent = "";
-    answerInput.removeAttribute("aria-invalid");
-  }
-
-  function showValidation(message) {
-    answerMessage.textContent = message;
-    answerInput.setAttribute("aria-invalid", "true");
-    answerInput.focus();
-  }
-
-  function readAnswer() {
-    const answerText = answerInput.value.trim();
-    const fractionPattern = /^([+-]?\d+)(?:\s*\/\s*([+-]?\d+))?$/;
-    const match = answerText.match(fractionPattern);
-
-    if (!answerText) {
-      showValidation("Masukkan jawaban terlebih dahulu.");
-      return null;
-    }
-    if (!match) {
-      showValidation("Gunakan bilangan bulat atau pecahan, misalnya 8 atau 1/3.");
-      return null;
-    }
-
-    let numerator = BigInt(match[1]);
-    let denominator = BigInt(match[2] || "1");
-    if (denominator === 0n) {
-      showValidation("Penyebut pecahan tidak boleh bernilai 0.");
-      return null;
-    }
-    if (denominator < 0n) {
-      numerator = -numerator;
-      denominator = -denominator;
-    }
-    return { numerator: numerator, denominator: denominator };
-  }
-
-  function isCorrectAnswer(answer, question) {
-    return answer.numerator * BigInt(question.answerDenominator) === BigInt(question.answerNumerator) * answer.denominator;
+    answerOptions.replaceChildren(...options.map(function (answer, index) {
+      return createOptionButton(answer, index, question);
+    }));
+    answerOptions.querySelector("button").focus();
   }
 
   function setSaveStatus(message, state, canRetry) {
@@ -191,6 +202,18 @@
     void saveCurrentResult();
   }
 
+  function submitAnswer(answer, question) {
+    if (hasFinishedSession) return;
+    if (answer === question.answer) correctAnswers += 1;
+
+    currentQuestionIndex += 1;
+    if (currentQuestionIndex === exercise.totalQuestions) {
+      finishExercise();
+      return;
+    }
+    renderQuestion();
+  }
+
   function startExercise() {
     sessionQuestions = createSessionQuestions();
     currentQuestionIndex = 0;
@@ -201,25 +224,6 @@
     window.MathPractice.showOnly(quizScreen, screens);
     renderQuestion();
   }
-
-  answerForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    if (hasFinishedSession) return;
-    clearValidation();
-    const answer = readAnswer();
-    if (!answer) return;
-
-    if (isCorrectAnswer(answer, sessionQuestions[currentQuestionIndex])) {
-      correctAnswers += 1;
-    }
-
-    currentQuestionIndex += 1;
-    if (currentQuestionIndex === exercise.totalQuestions) {
-      finishExercise();
-      return;
-    }
-    renderQuestion();
-  });
 
   window.MathPractice.startExponentExercise = startExercise;
   window.MathPractice.retryExponentResult = saveCurrentResult;
