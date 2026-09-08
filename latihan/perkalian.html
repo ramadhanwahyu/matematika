@@ -45,7 +45,7 @@
         </form>
       </section>
 
-      <section id="result-screen" class="card quiz-card result-card is-hidden" aria-labelledby="result-title">
+      <section id="result-screen" class="card quiz-card result-card speed-result-card is-hidden" aria-labelledby="result-title">
         <p class="eyebrow">Waktu selesai</p>
         <h1 id="result-title" tabindex="-1">Hasil latihanmu</h1>
         <div class="score-orbit speed-score-orbit" aria-label="Skor akhir"><strong id="final-score">0</strong><span>poin</span></div>
@@ -55,6 +55,13 @@
           <div><span id="incorrect-count">0</span><p>Jawaban salah</p></div>
           <div><span id="total-count">0</span><p>Total dijawab</p></div>
         </div>
+        <section class="result-review" aria-labelledby="review-title">
+          <div class="result-review-heading">
+            <p class="eyebrow">Tinjauan jawaban</p>
+            <h2 id="review-title">Periksa jawabanmu</h2>
+          </div>
+          <div id="result-review-list" class="result-review-list"></div>
+        </section>
         <div class="result-actions">
           <button class="button button-primary" type="button" onclick="window.MathPractice.startMultiplicationExercise()">Ulangi latihan</button>
           <a class="button button-outline" href="../index.html">Kembali ke beranda</a>

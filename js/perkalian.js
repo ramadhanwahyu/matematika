@@ -20,6 +20,7 @@
   const saveStatus = document.getElementById("save-status");
   const retrySaveButton = document.getElementById("retry-save-button");
   const studentSummary = document.getElementById("student-summary");
+  const resultReviewList = document.getElementById("result-review-list");
 
   let currentQuestion = null;
   let previousQuestionKey = "";
@@ -29,6 +30,7 @@
   let timerId = null;
   let hasFinishedSession = false;
   let currentSubmission = null;
+  let answerHistory = [];
 
   const student = window.MathPractice.getStudent();
   if (!student) {
@@ -100,13 +102,63 @@
     }
   }
 
+  function createReviewAnswer(label, value) {
+    const answerGroup = document.createElement("div");
+    const answerLabel = document.createElement("p");
+    const answerValue = document.createElement("span");
+
+    answerGroup.className = "result-review-answer";
+    answerLabel.textContent = label;
+    answerValue.className = "result-review-answer-value";
+    answerValue.textContent = value;
+    answerGroup.append(answerLabel, answerValue);
+    return answerGroup;
+  }
+
+  function createReviewItem(item, index) {
+    const reviewItem = document.createElement("article");
+    const topLine = document.createElement("div");
+    const questionNumber = document.createElement("p");
+    const status = document.createElement("p");
+    const expression = document.createElement("p");
+    const answers = document.createElement("div");
+
+    reviewItem.className = "result-review-item";
+    reviewItem.dataset.state = item.isCorrect ? "correct" : "incorrect";
+    topLine.className = "result-review-item-topline";
+    questionNumber.className = "result-review-number";
+    questionNumber.textContent = `Soal ${index + 1}`;
+    status.className = "result-review-status";
+    status.textContent = item.isCorrect ? "Benar" : "Perlu ditinjau";
+    expression.className = "result-review-expression multiplication-review-expression";
+    expression.textContent = `${item.firstFactor} × ${item.secondFactor} =`;
+    answers.className = "result-review-answers";
+    answers.append(createReviewAnswer("Jawabanmu", item.studentAnswer));
+    if (!item.isCorrect) answers.append(createReviewAnswer("Jawaban benar", item.correctAnswer));
+
+    topLine.append(questionNumber, status);
+    reviewItem.append(topLine, expression, answers);
+    return reviewItem;
+  }
+
+  function renderResultReview() {
+    if (answerHistory.length === 0) {
+      const emptyMessage = document.createElement("p");
+      emptyMessage.className = "result-review-empty";
+      emptyMessage.textContent = "Belum ada soal yang dijawab pada sesi ini.";
+      resultReviewList.replaceChildren(emptyMessage);
+      return;
+    }
+    resultReviewList.replaceChildren(...answerHistory.map(createReviewItem));
+  }
+
   function finishExercise() {
     if (hasFinishedSession) return;
     hasFinishedSession = true;
     window.clearInterval(timerId);
     timerId = null;
 
-    const totalAnswers = correctAnswers + incorrectAnswers;
+    const totalAnswers = answerHistory.length;
     const result = {
       exercise_id: exercise.id,
       exercise_name: exercise.name,
@@ -122,6 +174,7 @@
     document.getElementById("incorrect-count").textContent = incorrectAnswers;
     document.getElementById("total-count").textContent = totalAnswers;
     document.getElementById("result-summary").textContent = `Kamu memperoleh ${correctAnswers} poin dalam satu menit.`;
+    renderResultReview();
     window.MathPractice.showOnly(resultScreen, screens);
     resultScreen.querySelector("h1").focus({ preventScroll: true });
     void saveCurrentResult();
@@ -134,6 +187,7 @@
     previousQuestionKey = "";
     hasFinishedSession = false;
     currentSubmission = null;
+    answerHistory = [];
     correctProgress.textContent = "0 poin";
     setSaveStatus("", "idle", false);
     deadline = Date.now() + exercise.durationSeconds * 1000;
@@ -159,7 +213,17 @@
       return;
     }
 
-    if (Number(answerText) === currentQuestion.answer) {
+    const studentAnswer = Number(answerText);
+    const isCorrect = studentAnswer === currentQuestion.answer;
+    answerHistory.push({
+      firstFactor: currentQuestion.firstFactor,
+      secondFactor: currentQuestion.secondFactor,
+      studentAnswer: studentAnswer,
+      correctAnswer: currentQuestion.answer,
+      isCorrect: isCorrect
+    });
+
+    if (isCorrect) {
       correctAnswers += 1;
       correctProgress.textContent = `${correctAnswers} poin`;
     } else {
