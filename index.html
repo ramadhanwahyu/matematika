@@ -25,7 +25,7 @@
             <p class="eyebrow">Latihan matematika</p>
             <h1>Pilih latihan, <span>mulai berhitung.</span></h1>
             <p class="home-description">Latihan singkat untuk menguatkan konsep dan melihat hasil setiap sesi.</p>
-            <a class="text-link home-catalog-link" href="#latihan">Lihat latihan tersedia <span aria-hidden="true">↓</span></a>
+            <a class="text-link home-catalog-link" href="#latihan">Pilih latihan <span aria-hidden="true">↓</span></a>
           </div>
         </div>
       </section>
@@ -38,49 +38,105 @@
           <p>Pilih satu latihan sesuai fokusmu hari ini.</p>
         </div>
 
-        <div class="home-exercise-grid">
-        <article class="card home-exercise-card">
-          <div class="exercise-card-topline">
-            <p class="exercise-label">Pecahan · Dasar–menengah</p>
-          </div>
-          <div class="exercise-content">
-            <h3>Penjumlahan Pecahan</h3>
-            <p>Latih menyamakan penyebut, mencari KPK, dan menyederhanakan hasil penjumlahan.</p>
-          </div>
-          <dl class="exercise-facts">
-            <div><dt>Format</dt><dd>10 soal acak</dd></div>
-            <div><dt>Waktu</dt><dd>Tanpa batas</dd></div>
-          </dl>
-          <a class="button button-primary" href="student.html?next=latihan/penjumlahan-pecahan.html">Mulai latihan <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="card home-exercise-card home-exercise-card-speed">
-          <div class="exercise-card-topline">
-            <p class="exercise-label">Perkalian · Kecepatan dasar</p>
-          </div>
-          <div class="exercise-content">
-            <h3>Perkalian Cepat</h3>
-            <p>Jawab sebanyak mungkin soal perkalian dasar dalam waktu satu menit.</p>
-          </div>
-          <dl class="exercise-facts">
-            <div><dt>Format</dt><dd>Soal berlanjut</dd></div>
-            <div><dt>Waktu</dt><dd>1 menit</dd></div>
-          </dl>
-          <a class="button button-primary" href="student.html?next=latihan/perkalian.html">Mulai latihan <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="card home-exercise-card home-exercise-card-exponent">
-          <div class="exercise-card-topline">
-            <p class="exercise-label">Aljabar · Eksponen</p>
-          </div>
-          <div class="exercise-content">
-            <h3>Eksponen</h3>
-            <p>Sederhanakan bentuk berpangkat dengan aturan perkalian, pembagian, dan pangkat bertingkat.</p>
-          </div>
-          <dl class="exercise-facts">
-            <div><dt>Format</dt><dd>10 soal acak</dd></div>
-            <div><dt>Nilai</dt><dd>10 poin per soal</dd></div>
-          </dl>
-          <a class="button button-primary" href="student.html?next=latihan/eksponen.html">Mulai latihan <span aria-hidden="true">→</span></a>
-        </article>
+        <div class="home-exercise-groups">
+          <section class="home-exercise-group" aria-labelledby="fraction-group-heading">
+            <div class="home-exercise-group-heading">
+              <h3 id="fraction-group-heading">Pecahan</h3>
+            </div>
+            <div class="home-exercise-grid">
+              <article class="card home-exercise-card">
+                <div class="exercise-card-topline">
+                  <p class="exercise-label">Pecahan · Dasar–menengah</p>
+                <span class="home-card-symbol" aria-hidden="true">½ + ¼</span>
+                </div>
+                <div class="exercise-content">
+                  <h4>Penjumlahan Pecahan</h4>
+                  <p>Samakan penyebut, jumlahkan pecahannya.</p>
+                </div>
+                <dl class="exercise-facts">
+                  <div><dt>Format</dt><dd>10 soal acak</dd></div>
+                  <div><dt>Waktu</dt><dd>Tanpa batas</dd></div>
+                </dl>
+                <a class="button button-primary" href="student.html?next=latihan/penjumlahan-pecahan.html">Mulai latihan <span aria-hidden="true">→</span></a>
+              </article>
+              <article class="card home-exercise-card home-exercise-card-fraction-multiply">
+                <div class="exercise-card-topline">
+                  <p class="exercise-label">Pecahan · Perkalian</p>
+                <span class="home-card-symbol" aria-hidden="true">½ × ⅔</span>
+                </div>
+                <div class="exercise-content">
+                  <h4>Perkalian Pecahan</h4>
+                  <p>Kalikan dua dan tiga pecahan.</p>
+                </div>
+                <dl class="exercise-facts">
+                  <div><dt>Format</dt><dd>10 soal acak</dd></div>
+                  <div><dt>Nilai</dt><dd>10 poin per soal</dd></div>
+                </dl>
+                <a class="button button-primary" href="student.html?next=latihan/perkalian-pecahan.html">Mulai latihan <span aria-hidden="true">→</span></a>
+              </article>
+            </div>
+          </section>
+
+          <section class="home-exercise-group" aria-labelledby="speed-group-heading">
+            <div class="home-exercise-group-heading">
+              <h3 id="speed-group-heading">Kecepatan berhitung</h3>
+            </div>
+            <div class="home-exercise-grid">
+              <article class="card home-exercise-card home-exercise-card-speed">
+                <div class="exercise-card-topline">
+                  <p class="exercise-label">Perkalian · Kecepatan dasar</p>
+                <span class="home-card-symbol" aria-hidden="true">8 × 7</span>
+                </div>
+                <div class="exercise-content">
+                  <h4>Perkalian Cepat</h4>
+                  <p>Uji kelancaran perkalian 2–9.</p>
+                </div>
+                <dl class="exercise-facts">
+                  <div><dt>Format</dt><dd>Soal berlanjut</dd></div>
+                  <div><dt>Waktu</dt><dd>1 menit</dd></div>
+                </dl>
+                <a class="button button-primary" href="student.html?next=latihan/perkalian.html">Mulai latihan <span aria-hidden="true">→</span></a>
+              </article>
+              <article class="card home-exercise-card home-exercise-card-division">
+                <div class="exercise-card-topline">
+                  <p class="exercise-label">Pembagian · Kecepatan dasar</p>
+                <span class="home-card-symbol" aria-hidden="true">72 ÷ 9</span>
+                </div>
+                <div class="exercise-content">
+                  <h4>Pembagian Cepat</h4>
+                  <p>Latih pembagian dengan hasil satu digit.</p>
+                </div>
+                <dl class="exercise-facts">
+                  <div><dt>Format</dt><dd>Soal berlanjut</dd></div>
+                  <div><dt>Waktu</dt><dd>1 menit</dd></div>
+                </dl>
+                <a class="button button-primary" href="student.html?next=latihan/pembagian.html">Mulai latihan <span aria-hidden="true">→</span></a>
+              </article>
+            </div>
+          </section>
+
+          <section class="home-exercise-group" aria-labelledby="algebra-group-heading">
+            <div class="home-exercise-group-heading">
+              <h3 id="algebra-group-heading">Aljabar dan Eksponen</h3>
+            </div>
+            <div class="home-exercise-grid">
+              <article class="card home-exercise-card home-exercise-card-exponent">
+                <div class="exercise-card-topline">
+                  <p class="exercise-label">Eksponen</p>
+                <span class="home-card-symbol" aria-hidden="true">x² · x³</span>
+                </div>
+                <div class="exercise-content">
+                  <h4>Eksponen</h4>
+                  <p>Kuasai aturan bilangan berpangkat.</p>
+                </div>
+                <dl class="exercise-facts">
+                  <div><dt>Format</dt><dd>10 soal acak</dd></div>
+                  <div><dt>Nilai</dt><dd>10 poin per soal</dd></div>
+                </dl>
+                <a class="button button-primary" href="student.html?next=latihan/eksponen.html">Mulai latihan <span aria-hidden="true">→</span></a>
+              </article>
+            </div>
+          </section>
         </div>
       </section>
     </main>

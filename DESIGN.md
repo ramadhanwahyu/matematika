@@ -62,11 +62,11 @@ Lembar kerja matematika yang terbitan profesional: tinta gelap, aturan garis tip
 
 ## Typography
 
-Judul memakai `display` serif agar terasa seperti materi pelajaran; isi, kontrol, dan instruksi memakai `sans` yang mudah dibaca. Bentuk pecahan memakai gaya numerik tebal pada ukuran besar dan tidak bergantung pada font eksternal.
+Judul halaman latihan memakai `display` serif agar terasa seperti materi pelajaran; isi, kontrol, dan instruksi memakai `sans` yang mudah dibaca. Beranda memakai `sans` untuk hero, judul katalog, dan kartu agar ringkas dan modern. Simbol matematika kecil pada kartu tetap memakai serif. Bentuk pecahan memakai gaya numerik tebal pada ukuran besar dan tidak bergantung pada font eksternal.
 
 ## Layout
 
-Konten berpusat pada lebar maksimum `page-max`. Beranda memakai hero ringkas yang berpusat, lalu kartu latihan setara dalam grid responsif dua hingga tiga kolom. Spasi tepi menyusut pada ponsel dan kartu berubah menjadi satu kolom. Tinggi konten mengikuti dokumen agar tidak ada area latihan yang terpotong pada layar kecil atau pembesaran teks.
+Konten berpusat pada lebar maksimum `page-max`. Beranda memakai hero berpusat dengan judul dua baris dan katalog menurut materi: pecahan, kecepatan berhitung, dan aljabar. Grid menyediakan tiga slot kartu pada desktop, dua pada tablet, dan satu pada ponsel. Slot kosong tetap kosong; kartu tidak melebar untuk memenuhi baris. Kartu berisi simbol kecil, judul, deskripsi singkat, metadata sebaris, dan CTA berwarna lembut, tanpa tinggi minimum. Tinggi konten mengikuti dokumen agar tidak ada materi yang terpotong pada layar kecil atau pembesaran teks.
 
 ## Elevation & Depth
 
@@ -96,7 +96,7 @@ Transisi ringan dipakai untuk hover dan perubahan tampilan. Semua animasi dimati
 
 ### Content and data visualization
 
-Bahasa antarmuka langsung dan suportif: instruksi menjelaskan langkah koreksi, bukan menyalahkan siswa. Nilai latihan pecahan dan eksponen ditampilkan 0–100, sedangkan latihan kecepatan menampilkan jumlah poin secara utuh dengan timer yang selalu terlihat.
+Bahasa antarmuka langsung dan suportif: instruksi menjelaskan langkah koreksi, bukan menyalahkan siswa. Nilai latihan pecahan, perkalian pecahan, dan eksponen ditampilkan 0–100, sedangkan latihan kecepatan (perkalian dan pembagian) menampilkan jumlah poin secara utuh dengan timer yang selalu terlihat.
 
 ## Do's and Don'ts
 
