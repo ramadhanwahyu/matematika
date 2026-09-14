@@ -96,7 +96,7 @@ Transisi ringan dipakai untuk hover dan perubahan tampilan. Semua animasi dimati
 
 ### Content and data visualization
 
-Bahasa antarmuka langsung dan suportif: instruksi menjelaskan langkah koreksi, bukan menyalahkan siswa. Nilai latihan pecahan, perkalian pecahan, dan eksponen ditampilkan 0–100, sedangkan latihan kecepatan (perkalian dan pembagian) menampilkan jumlah poin secara utuh dengan timer yang selalu terlihat.
+Bahasa antarmuka langsung dan suportif: instruksi menjelaskan langkah koreksi, bukan menyalahkan siswa. Nilai latihan pecahan dan eksponen ditampilkan 0–100. Latihan kecepatan menampilkan jumlah poin secara utuh dengan timer, sedangkan latihan berjangka seperti Sifat Eksponen Dasar menampilkan hitung mundur dan tetap merangkum seluruh soal saat waktu habis.
 
 ## Do's and Don'ts
 
