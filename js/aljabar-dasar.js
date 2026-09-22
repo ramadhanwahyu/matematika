@@ -31,7 +31,7 @@
   // Bank mencakup operasi dasar, distributif, variabel pada dua ruas, dan pecahan sederhana.
   const questionBank = [
     { mathml: equation(subtract(term(4, "a"), number(9)), number(-5)), label: "4a kurang 9 sama dengan negatif 5", answer: valueOption(1), distractors: [valueOption(-1), valueOption(2), valueOption(4)] },
-    { mathml: equation(divide(subtract(term(3, "m"), number(1)), number(4)), number(7)), label: "(3m kurang 1) dibagi 4 sama dengan 7", answer: valueOption(29), distractors: [valueOption(25), valueOption(27), valueOption(31)] },
+    { mathml: equation(divide(subtract(term(3, "m"), number(1)), number(4)), number(5)), label: "(3m kurang 1) dibagi 4 sama dengan 5", answer: valueOption(7), distractors: [valueOption(5), valueOption(6), valueOption(8)] },
     { mathml: equation(add(term(5, "x"), number(8)), number(23)), label: "5x tambah 8 sama dengan 23", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
     { mathml: equation(subtract(term(7, "p"), number(6)), number(29)), label: "7p kurang 6 sama dengan 29", answer: valueOption(5), distractors: [valueOption(3), valueOption(4), valueOption(6)] },
     { mathml: equation(subtract(number(12), term(3, "y")), number(-6)), label: "12 kurang 3y sama dengan negatif 6", answer: valueOption(6), distractors: [valueOption(-6), valueOption(2), valueOption(4)] },
