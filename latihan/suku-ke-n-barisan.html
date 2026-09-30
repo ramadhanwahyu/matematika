@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Latihan persamaan linear satu variabel level 2." />
-    <title>Aljabar Dasar Level 2 | Math Practice</title>
+    <meta name="description" content="Latihan menentukan suku ke-n barisan aritmetika." />
+    <title>Suku ke-n Barisan Aritmetika | Math Practice</title>
     <link rel="stylesheet" href="../css/style.css" />
   </head>
   <body class="quiz-page">
@@ -20,37 +20,38 @@
 
     <main class="quiz-main container">
       <section id="start-screen" class="card quiz-card intro-card" aria-labelledby="quiz-title">
-        <p class="eyebrow">Latihan 09 · Aljabar</p>
-        <h1 id="quiz-title">Aljabar Dasar Level 2</h1>
-        <p class="intro-text">Tentukan nilai variabel pada persamaan linear satu variabel secara bertahap dan teliti.</p>
+        <p class="eyebrow">Latihan 12 · Barisan dan Deret</p>
+        <h1 id="quiz-title">Suku ke-n Barisan Aritmetika</h1>
+        <p class="intro-text">Gunakan empat suku pertama untuk menemukan pola, lalu tentukan nilai suku ke-n.</p>
         <dl class="session-details">
           <div><dt>Jumlah soal</dt><dd>10 soal acak</dd></div>
-          <div><dt>Bentuk jawaban</dt><dd>4 pilihan jawaban</dd></div>
+          <div><dt>Nilai</dt><dd>10 poin per soal</dd></div>
         </dl>
-        <button class="button button-primary" type="button" onclick="window.MathPractice.startBasicAlgebraExercise()">Mulai latihan</button>
+        <button class="button button-primary" type="button" onclick="window.MathPractice.startArithmeticNthTermExercise()">Mulai latihan</button>
       </section>
 
-      <section id="quiz-screen" class="card quiz-card exponent-quiz-card is-hidden" aria-live="polite" aria-labelledby="question-progress">
+      <section id="quiz-screen" class="card quiz-card sequence-quiz-card is-hidden" aria-live="polite" aria-labelledby="question-progress">
         <div class="quiz-topline">
           <p id="question-progress" class="question-progress">Soal 1 dari 10</p>
-          <p id="score-progress" class="score-progress">Tentukan nilai variabel</p>
+          <p id="score-progress" class="score-progress">Cari polanya</p>
         </div>
         <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
-        <div class="question-area exponent-question-area">
-          <p class="question-prompt">Tentukan nilai variabel yang memenuhi persamaan berikut.</p>
-          <div id="question-expression" class="exponent-expression" aria-label="Soal aljabar"></div>
-        </div>
-        <section class="exponent-answer-section" aria-labelledby="answer-options-title">
-          <p id="answer-options-title" class="answer-options-title">Pilih nilai yang tepat.</p>
-          <div id="answer-options" class="exponent-options" role="group" aria-labelledby="answer-options-title"></div>
-        </section>
-        <div class="quiz-navigation" aria-label="Navigasi soal">
-          <button id="previous-button" class="button button-outline" type="button" onclick="window.MathPractice.showPreviousBasicAlgebraQuestion()">← Soal sebelumnya</button>
-          <button id="next-button" class="button button-primary" type="button" onclick="window.MathPractice.showNextBasicAlgebraQuestion()" disabled>Soal berikutnya →</button>
-        </div>
+        <form id="answer-form" class="sequence-answer-form" novalidate>
+          <div class="question-area">
+            <p class="question-prompt">Tentukan nilai suku ke-n dari barisan berikut.</p>
+            <p id="question-expression" class="sequence-expression" aria-label="Soal suku ke-n barisan aritmetika"></p>
+            <p id="term-prompt" class="term-prompt"></p>
+          </div>
+          <div class="single-sequence-input-group">
+            <label for="answer-input">Nilai suku ke-n</label>
+            <input id="answer-input" class="sequence-answer-input" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-describedby="answer-message" />
+          </div>
+          <p id="answer-message" class="form-message" role="alert"></p>
+          <button class="button button-primary" type="submit">Jawab dan lanjutkan</button>
+        </form>
       </section>
 
-      <section id="result-screen" class="card quiz-card result-card exponent-result-card is-hidden" aria-labelledby="result-title">
+      <section id="result-screen" class="card quiz-card result-card sequence-result-card is-hidden" aria-labelledby="result-title">
         <p class="eyebrow">Sesi selesai</p>
         <h1 id="result-title" tabindex="-1">Hasil latihanmu</h1>
         <div class="score-orbit" aria-label="Nilai akhir"><strong id="final-score">0</strong><span>/100</span></div>
@@ -68,15 +69,15 @@
           <div id="result-review-list" class="result-review-list"></div>
         </section>
         <div class="result-actions">
-          <button class="button button-primary" type="button" onclick="window.MathPractice.startBasicAlgebraExercise()">Ulangi latihan</button>
+          <button class="button button-primary" type="button" onclick="window.MathPractice.startArithmeticNthTermExercise()">Ulangi latihan</button>
           <a class="button button-outline" href="../index.html">Kembali ke beranda</a>
         </div>
         <div id="save-status" class="save-status" role="status" aria-live="polite"></div>
-        <button id="retry-save-button" class="text-button is-hidden" type="button" onclick="window.MathPractice.retryBasicAlgebraResult()">Coba simpan lagi</button>
+        <button id="retry-save-button" class="text-button is-hidden" type="button" onclick="window.MathPractice.retryArithmeticNthTermResult()">Coba simpan lagi</button>
       </section>
     </main>
 
     <script src="../js/common.js"></script>
-    <script src="../js/aljabar-dasar.js"></script>
+    <script src="../js/suku-ke-n-barisan.js"></script>
   </body>
 </html>

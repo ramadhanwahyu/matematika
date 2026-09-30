@@ -3,7 +3,7 @@
 
   const exercise = {
     id: "aljabar_dasar_01",
-    name: "Aljabar Dasar",
+    name: "Aljabar Dasar Level 2",
     totalQuestions: 10
   };
 
@@ -16,7 +16,9 @@
   function group(expression) { return `<mrow><mo>(</mo>${expression}<mo>)</mo></mrow>`; }
   function add(left, right) { return `<mrow>${left}<mo>+</mo>${right}</mrow>`; }
   function subtract(left, right) { return `<mrow>${left}<mo>−</mo>${right}</mrow>`; }
-  function multiply(left, right) { return `<mrow>${left}<mo>×</mo>${right}</mrow>`; }
+  // Perkalian yang diikuti tanda kurung ditulis sebagai perkalian implisit,
+  // misalnya 5(a - 2), sesuai notasi matematika yang umum digunakan.
+  function multiply(left, right) { return `<mrow>${left}${right}</mrow>`; }
   function divide(numerator, denominator) { return `<mfrac><mrow>${numerator}</mrow><mrow>${denominator}</mrow></mfrac>`; }
   function equation(left, right) { return `<math display="block"><mrow>${left}<mo>=</mo>${right}</mrow></math>`; }
 
@@ -31,34 +33,34 @@
   // Bank mencakup operasi dasar, distributif, variabel pada dua ruas, dan pecahan sederhana.
   const questionBank = [
     { mathml: equation(subtract(term(4, "a"), number(9)), number(-5)), label: "4a kurang 9 sama dengan negatif 5", answer: valueOption(1), distractors: [valueOption(-1), valueOption(2), valueOption(4)] },
-    { mathml: equation(divide(subtract(term(3, "m"), number(1)), number(4)), number(5)), label: "(3m kurang 1) dibagi 4 sama dengan 5", answer: valueOption(7), distractors: [valueOption(5), valueOption(6), valueOption(8)] },
+    { mathml: equation(divide(subtract(term(3, "a"), number(1)), number(4)), number(5)), label: "(3a kurang 1) dibagi 4 sama dengan 5", answer: valueOption(7), distractors: [valueOption(5), valueOption(6), valueOption(8)] },
     { mathml: equation(add(term(5, "x"), number(8)), number(23)), label: "5x tambah 8 sama dengan 23", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
-    { mathml: equation(subtract(term(7, "p"), number(6)), number(29)), label: "7p kurang 6 sama dengan 29", answer: valueOption(5), distractors: [valueOption(3), valueOption(4), valueOption(6)] },
-    { mathml: equation(subtract(number(12), term(3, "y")), number(-6)), label: "12 kurang 3y sama dengan negatif 6", answer: valueOption(6), distractors: [valueOption(-6), valueOption(2), valueOption(4)] },
-    { mathml: equation(add(term(-4, "k"), number(9)), number(21)), label: "negatif 4k tambah 9 sama dengan 21", answer: valueOption(-3), distractors: [valueOption(3), valueOption(-2), valueOption(-4)] },
-    { mathml: equation(add(term(2, "n"), number(15)), number(3)), label: "2n tambah 15 sama dengan 3", answer: valueOption(-6), distractors: [valueOption(6), valueOption(-5), valueOption(-9)] },
-    { mathml: equation(subtract(number(18), term(5, "b")), number(3)), label: "18 kurang 5b sama dengan 3", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(-3)] },
-    { mathml: equation(subtract(term(6, "r"), number(2)), add(term(4, "r"), number(10))), label: "6r kurang 2 sama dengan 4r tambah 10", answer: valueOption(6), distractors: [valueOption(4), valueOption(5), valueOption(8)] },
-    { mathml: equation(add(term(9, "q"), number(7)), subtract(term(5, "q"), number(9))), label: "9q tambah 7 sama dengan 5q kurang 9", answer: valueOption(-4), distractors: [valueOption(4), valueOption(-2), valueOption(-6)] },
-    { mathml: equation(multiply(number(3), group(add(variable("t"), number(4)))), number(27)), label: "3 kali (t tambah 4) sama dengan 27", answer: valueOption(5), distractors: [valueOption(4), valueOption(6), valueOption(9)] },
-    { mathml: equation(multiply(number(5), group(subtract(variable("h"), number(2)))), number(15)), label: "5 kali (h kurang 2) sama dengan 15", answer: valueOption(5), distractors: [valueOption(3), valueOption(7), valueOption(13)] },
-    { mathml: equation(multiply(number(-2), group(add(variable("c"), number(3)))), number(8)), label: "negatif 2 kali (c tambah 3) sama dengan 8", answer: valueOption(-7), distractors: [valueOption(7), valueOption(-1), valueOption(-5)] },
-    { mathml: equation(multiply(number(4), group(subtract(term(2, "d"), number(1)))), number(20)), label: "4 kali (2d kurang 1) sama dengan 20", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
-    { mathml: equation(multiply(number(3), group(add(term(2, "v"), number(5)))), number(27)), label: "3 kali (2v tambah 5) sama dengan 27", answer: valueOption(2), distractors: [valueOption(1), valueOption(3), valueOption(6)] },
-    { mathml: equation(add(multiply(number(2), group(subtract(variable("w"), number(3)))), number(4)), number(18)), label: "2 kali (w kurang 3) tambah 4 sama dengan 18", answer: valueOption(10), distractors: [valueOption(8), valueOption(9), valueOption(12)] },
-    { mathml: equation(subtract(multiply(number(5), group(add(variable("g"), number(1)))), number(3)), number(22)), label: "5 kali (g tambah 1) kurang 3 sama dengan 22", answer: valueOption(4), distractors: [valueOption(3), valueOption(5), valueOption(6)] },
-    { mathml: equation(add(multiply(number(4), group(subtract(variable("s"), number(2)))), term(3, "s")), number(20)), label: "4 kali (s kurang 2) tambah 3s sama dengan 20", answer: valueOption(4), distractors: [valueOption(3), valueOption(5), valueOption(6)] },
-    { mathml: equation(subtract(term(6, "z"), multiply(number(2), group(add(variable("z"), number(5))))), number(10)), label: "6z kurang 2 kali (z tambah 5) sama dengan 10", answer: valueOption(5), distractors: [valueOption(3), valueOption(4), valueOption(6)] },
-    { mathml: equation(add(multiply(number(3), group(subtract(term(2, "u"), number(1)))), variable("u")), number(18)), label: "3 kali (2u kurang 1) tambah u sama dengan 18", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
+    { mathml: equation(subtract(term(7, "a"), number(6)), number(29)), label: "7a kurang 6 sama dengan 29", answer: valueOption(5), distractors: [valueOption(3), valueOption(4), valueOption(6)] },
+    { mathml: equation(subtract(number(12), term(3, "x")), number(-6)), label: "12 kurang 3x sama dengan negatif 6", answer: valueOption(6), distractors: [valueOption(-6), valueOption(2), valueOption(4)] },
+    { mathml: equation(add(term(-4, "a"), number(9)), number(21)), label: "negatif 4a tambah 9 sama dengan 21", answer: valueOption(-3), distractors: [valueOption(3), valueOption(-2), valueOption(-4)] },
+    { mathml: equation(add(term(2, "x"), number(15)), number(3)), label: "2x tambah 15 sama dengan 3", answer: valueOption(-6), distractors: [valueOption(6), valueOption(-5), valueOption(-9)] },
+    { mathml: equation(subtract(number(18), term(5, "a")), number(3)), label: "18 kurang 5a sama dengan 3", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(-3)] },
+    { mathml: equation(subtract(term(6, "x"), number(2)), add(term(4, "x"), number(10))), label: "6x kurang 2 sama dengan 4x tambah 10", answer: valueOption(6), distractors: [valueOption(4), valueOption(5), valueOption(8)] },
+    { mathml: equation(add(term(9, "a"), number(7)), subtract(term(5, "a"), number(9))), label: "9a tambah 7 sama dengan 5a kurang 9", answer: valueOption(-4), distractors: [valueOption(4), valueOption(-2), valueOption(-6)] },
+    { mathml: equation(multiply(number(3), group(add(variable("a"), number(4)))), number(27)), label: "3 kali (a tambah 4) sama dengan 27", answer: valueOption(5), distractors: [valueOption(4), valueOption(6), valueOption(9)] },
+    { mathml: equation(multiply(number(5), group(subtract(variable("x"), number(2)))), number(15)), label: "5 kali (x kurang 2) sama dengan 15", answer: valueOption(5), distractors: [valueOption(3), valueOption(7), valueOption(13)] },
+    { mathml: equation(multiply(number(-2), group(add(variable("a"), number(3)))), number(8)), label: "negatif 2 kali (a tambah 3) sama dengan 8", answer: valueOption(-7), distractors: [valueOption(7), valueOption(-1), valueOption(-5)] },
+    { mathml: equation(multiply(number(4), group(subtract(term(2, "x"), number(1)))), number(20)), label: "4 kali (2x kurang 1) sama dengan 20", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
+    { mathml: equation(multiply(number(3), group(add(term(2, "a"), number(5)))), number(27)), label: "3 kali (2a tambah 5) sama dengan 27", answer: valueOption(2), distractors: [valueOption(1), valueOption(3), valueOption(6)] },
+    { mathml: equation(add(multiply(number(2), group(subtract(variable("x"), number(3)))), number(4)), number(18)), label: "2 kali (x kurang 3) tambah 4 sama dengan 18", answer: valueOption(10), distractors: [valueOption(8), valueOption(9), valueOption(12)] },
+    { mathml: equation(subtract(multiply(number(5), group(add(variable("a"), number(1)))), number(3)), number(22)), label: "5 kali (a tambah 1) kurang 3 sama dengan 22", answer: valueOption(4), distractors: [valueOption(3), valueOption(5), valueOption(6)] },
+    { mathml: equation(add(multiply(number(4), group(subtract(variable("x"), number(2)))), term(3, "x")), number(20)), label: "4 kali (x kurang 2) tambah 3x sama dengan 20", answer: valueOption(4), distractors: [valueOption(3), valueOption(5), valueOption(6)] },
+    { mathml: equation(subtract(term(6, "a"), multiply(number(2), group(add(variable("a"), number(5))))), number(10)), label: "6a kurang 2 kali (a tambah 5) sama dengan 10", answer: valueOption(5), distractors: [valueOption(3), valueOption(4), valueOption(6)] },
+    { mathml: equation(add(multiply(number(3), group(subtract(term(2, "x"), number(1)))), variable("x")), number(18)), label: "3 kali (2x kurang 1) tambah x sama dengan 18", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
     { mathml: equation(divide(add(variable("x"), number(5)), number(3)), number(4)), label: "(x tambah 5) dibagi 3 sama dengan 4", answer: valueOption(7), distractors: [valueOption(5), valueOption(6), valueOption(9)] },
     { mathml: equation(divide(subtract(term(2, "a"), number(3)), number(5)), number(3)), label: "(2a kurang 3) dibagi 5 sama dengan 3", answer: valueOption(9), distractors: [valueOption(6), valueOption(8), valueOption(12)] },
-    { mathml: equation(divide(add(term(4, "m"), number(8)), number(2)), number(10)), label: "(4m tambah 8) dibagi 2 sama dengan 10", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
-    { mathml: equation(divide(subtract(term(5, "p"), number(10)), number(3)), number(5)), label: "(5p kurang 10) dibagi 3 sama dengan 5", answer: valueOption(5), distractors: [valueOption(4), valueOption(6), valueOption(7)] },
-    { mathml: equation(divide(add(term(3, "y"), number(6)), number(4)), number(0)), label: "(3y tambah 6) dibagi 4 sama dengan 0", answer: valueOption(-2), distractors: [valueOption(0), valueOption(2), valueOption(-6)] },
-    { mathml: equation(divide(add(term(2, "k"), number(1)), number(3)), number(-5)), label: "(2k tambah 1) dibagi 3 sama dengan negatif 5", answer: valueOption(-8), distractors: [valueOption(-5), valueOption(-7), valueOption(8)] },
-    { mathml: equation(add(divide(subtract(variable("r"), number(4)), number(2)), number(3)), number(8)), label: "(r kurang 4) dibagi 2 tambah 3 sama dengan 8", answer: valueOption(14), distractors: [valueOption(10), valueOption(12), valueOption(16)] },
+    { mathml: equation(divide(add(term(4, "a"), number(8)), number(2)), number(10)), label: "(4a tambah 8) dibagi 2 sama dengan 10", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
+    { mathml: equation(divide(subtract(term(5, "x"), number(10)), number(3)), number(5)), label: "(5x kurang 10) dibagi 3 sama dengan 5", answer: valueOption(5), distractors: [valueOption(4), valueOption(6), valueOption(7)] },
+    { mathml: equation(divide(add(term(3, "a"), number(6)), number(4)), number(0)), label: "(3a tambah 6) dibagi 4 sama dengan 0", answer: valueOption(-2), distractors: [valueOption(0), valueOption(2), valueOption(-6)] },
+    { mathml: equation(divide(add(term(2, "x"), number(1)), number(3)), number(-5)), label: "(2x tambah 1) dibagi 3 sama dengan negatif 5", answer: valueOption(-8), distractors: [valueOption(-5), valueOption(-7), valueOption(8)] },
+    { mathml: equation(add(divide(subtract(variable("a"), number(4)), number(2)), number(3)), number(8)), label: "(a kurang 4) dibagi 2 tambah 3 sama dengan 8", answer: valueOption(14), distractors: [valueOption(10), valueOption(12), valueOption(16)] },
     { mathml: equation(subtract(term(7, "x"), number(4)), add(term(3, "x"), number(16))), label: "7x kurang 4 sama dengan 3x tambah 16", answer: valueOption(5), distractors: [valueOption(4), valueOption(6), valueOption(7)] },
-    { mathml: equation(multiply(number(5), group(subtract(term(2, "m"), number(1)))), add(term(3, "m"), number(16))), label: "5 kali (2m kurang 1) sama dengan 3m tambah 16", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
+    { mathml: equation(multiply(number(5), group(subtract(term(2, "x"), number(1)))), add(term(3, "x"), number(16))), label: "5 kali (2x kurang 1) sama dengan 3x tambah 16", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] },
     { mathml: equation(subtract(multiply(number(4), group(add(variable("a"), number(2)))), number(3)), add(term(2, "a"), number(11))), label: "4 kali (a tambah 2) kurang 3 sama dengan 2a tambah 11", answer: valueOption(3), distractors: [valueOption(2), valueOption(4), valueOption(5)] }
   ];
 

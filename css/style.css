@@ -99,6 +99,12 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .home-catalog-rule { display: block; width: 2.75rem; height: 2px; margin: 1rem 0 .9rem; background: var(--color-primary); }
 .home-catalog-heading > p:last-child { max-width: 29rem; margin: 0; color: var(--color-muted); }
 .home-exercise-groups { display: grid; gap: 2rem; max-width: 66rem; margin-inline: auto; }
+/* Urutan katalog di beranda: kecepatan, pecahan, aljabar, barisan, eksponen. */
+.home-exercise-group[aria-labelledby="speed-group-heading"] { order: 1; }
+.home-exercise-group[aria-labelledby="fraction-group-heading"] { order: 2; }
+.home-exercise-group[aria-labelledby="basic-algebra-group-heading"] { order: 3; }
+.home-exercise-group[aria-labelledby="sequence-group-heading"] { order: 4; }
+.home-exercise-group[aria-labelledby="exponent-group-heading"] { order: 5; }
 .home-exercise-group-heading { display: flex; align-items: center; gap: .75rem; margin-bottom: .85rem; }
 .home-exercise-group-heading::after { content: ""; flex: 1; height: 1px; background: var(--color-border); }
 .home-exercise-group-heading h3 { flex: 0 0 auto; margin: 0; font-family: var(--font-sans); font-size: .95rem; font-weight: 700; letter-spacing: -.015em; }
@@ -123,6 +129,7 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .home-exercise-card-exponent-basic { --card-accent: #516c5e; --card-tint: #edf5ef; }
 .home-exercise-card-fraction-multiply { --card-accent: #2f645f; --card-tint: #eaf5f1; }
 .home-exercise-card-algebra { --card-accent: #705c82; --card-tint: #f3eff7; }
+.home-exercise-card-sequence { --card-accent: #7b6848; --card-tint: #f5f1e8; }
 @media (max-width: 1000px) {
   .home-exercise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -172,6 +179,24 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .form-message { min-height: 1.6rem; margin: .15rem 0 0; color: var(--color-danger); font-size: .85rem; font-weight: 700; }
 .form-message[data-state="success"] { color: var(--color-success); }
 .answer-form > .button { width: 100%; margin-top: .85rem; }
+
+.sequence-quiz-card, .sequence-result-card { width: min(100%, 54rem); }
+.sequence-answer-form { padding-bottom: .2rem; }
+.sequence-expression { margin: 0; color: var(--color-ink); font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3.7rem); font-weight: 700; letter-spacing: -.045em; line-height: 1.2; overflow-wrap: anywhere; }
+.sequence-input-row { display: flex; align-items: end; justify-content: center; gap: .8rem; margin-top: .35rem; }
+.sequence-input-group { display: grid; gap: .35rem; min-width: 0; }
+.sequence-input-group label { color: var(--color-muted); font-size: .75rem; font-weight: 750; text-align: center; }
+.sequence-answer-input { width: 8.5rem; min-height: 3.5rem; padding: .35rem .6rem; border: 1px solid var(--color-rule); border-radius: var(--radius-control); color: var(--color-ink); background: #fff; font-family: var(--font-display); font-size: 2rem; font-weight: 700; line-height: 1; text-align: center; }
+.sequence-answer-input:hover { border-color: var(--color-primary); }
+.sequence-answer-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(31, 103, 151, .14); outline: none; }
+.sequence-answer-input[aria-invalid="true"] { border-color: var(--color-danger); background: #fff9f8; }
+.sequence-separator { padding-bottom: .9rem; color: var(--color-muted); font-size: .8rem; font-weight: 750; }
+.sequence-review-expression { margin-bottom: .2rem; font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
+.result-review-correction { margin: .35rem 0 0; color: var(--color-danger); font-size: .82rem; font-weight: 700; }
+.term-prompt { margin: .75rem 0 0; color: var(--color-primary-dark); font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; }
+.single-sequence-input-group { display: grid; justify-items: center; gap: .35rem; margin: .2rem auto 0; }
+.single-sequence-input-group label { color: var(--color-muted); font-size: .75rem; font-weight: 750; }
+.single-sequence-input-group .sequence-answer-input { width: min(100%, 14rem); }
 
 .fraction-multiplication-quiz-card, .fraction-multiplication-result-card { width: min(100%, 54rem); }
 .fraction-multiplication-row { flex-wrap: wrap; }
@@ -310,6 +335,10 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
   .fraction-answer-input { width: 3.8rem; height: 2.55rem; font-size: 2.1rem; }
   .equivalent-answer-value { width: 3.8rem; height: 2.55rem; font-size: 2.1rem; }
   .result-details { grid-template-columns: 1fr; }
+  .sequence-input-row { align-items: stretch; flex-direction: column; gap: .55rem; }
+  .sequence-input-group label { text-align: left; }
+  .sequence-answer-input { width: 100%; }
+  .sequence-separator { padding: 0; text-align: center; }
   .result-details div + div { border-top: 1px solid var(--color-border); border-left: 0; }
   .result-actions .button { width: 100%; }
   .student-id-row { grid-template-columns: 1fr; }
