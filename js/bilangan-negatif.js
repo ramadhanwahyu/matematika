@@ -1,0 +1,238 @@
+(function () {
+  "use strict";
+
+  const exercise = {
+    id: "bilangan_negatif_01",
+    name: "Penjumlahan dan Pengurangan Bilangan Negatif",
+    durationSeconds: 120
+  };
+
+  const startScreen = document.getElementById("start-screen");
+  const quizScreen = document.getElementById("quiz-screen");
+  const resultScreen = document.getElementById("result-screen");
+  const screens = [startScreen, quizScreen, resultScreen];
+  const answerForm = document.getElementById("answer-form");
+  const answerInput = document.getElementById("answer-input");
+  const questionExpression = document.getElementById("question-expression");
+  const timerValue = document.getElementById("timer-value");
+  const correctProgress = document.getElementById("correct-progress");
+  const answerMessage = document.getElementById("answer-message");
+  const saveStatus = document.getElementById("save-status");
+  const retrySaveButton = document.getElementById("retry-save-button");
+  const studentSummary = document.getElementById("student-summary");
+  const resultReviewList = document.getElementById("result-review-list");
+
+  let currentQuestion = null;
+  let previousQuestionKey = "";
+  let correctAnswers = 0;
+  let incorrectAnswers = 0;
+  let deadline = 0;
+  let timerId = null;
+  let hasFinishedSession = false;
+  let currentSubmission = null;
+  let answerHistory = [];
+
+  const student = window.MathPractice.getStudent();
+  if (!student) {
+    window.location.replace("../student.html?next=latihan/bilangan-negatif.html");
+    return;
+  }
+  studentSummary.textContent = `${student.name} — ${student.class_name}`;
+
+  function randomInteger(minimum, maximum) {
+    return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+  }
+
+  function formatOperand(value) {
+    return value < 0 ? `(${value})` : String(value);
+  }
+
+  function createQuestion() {
+    let firstNumber;
+    let secondNumber;
+    let operation;
+    let questionKey;
+
+    do {
+      firstNumber = randomInteger(1, 10) * (Math.random() < 0.5 ? -1 : 1);
+      secondNumber = randomInteger(1, 10) * (Math.random() < 0.5 ? -1 : 1);
+      operation = Math.random() < 0.5 ? "+" : "−";
+      questionKey = `${firstNumber}${operation}${secondNumber}`;
+    } while ((firstNumber > 0 && secondNumber > 0) || questionKey === previousQuestionKey);
+
+    previousQuestionKey = questionKey;
+    const answer = operation === "+" ? firstNumber + secondNumber : firstNumber - secondNumber;
+    return { firstNumber: firstNumber, secondNumber: secondNumber, operation: operation, answer: answer, key: questionKey };
+  }
+
+  function showQuestion() {
+    currentQuestion = createQuestion();
+    questionExpression.textContent = `${formatOperand(currentQuestion.firstNumber)} ${currentQuestion.operation} ${formatOperand(currentQuestion.secondNumber)} =`;
+    questionExpression.setAttribute("aria-label", `${currentQuestion.firstNumber} ${currentQuestion.operation === "+" ? "ditambah" : "dikurangi"} ${currentQuestion.secondNumber}`);
+    answerForm.reset();
+    answerMessage.textContent = "";
+    answerInput.removeAttribute("aria-invalid");
+    answerInput.focus();
+  }
+
+  function updateTimer() {
+    const remainingSeconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+    timerValue.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    if (remainingSeconds === 0) finishExercise();
+  }
+
+  function setSaveStatus(message, state, canRetry) {
+    saveStatus.textContent = message;
+    saveStatus.dataset.state = state;
+    retrySaveButton.classList.toggle("is-hidden", !canRetry);
+    retrySaveButton.disabled = !canRetry;
+  }
+
+  function updateSubmissionStatus(submission, message, state, canRetry) {
+    if (currentSubmission === submission) setSaveStatus(message, state, canRetry);
+  }
+
+  async function saveCurrentResult() {
+    const submission = currentSubmission;
+    if (!submission || submission.isSaving || submission.isSaved) return;
+    submission.isSaving = true;
+    updateSubmissionStatus(submission, "Menyimpan nilai...", "pending", false);
+    try {
+      await window.MathPractice.submitExerciseResult(submission.result);
+      submission.isSaved = true;
+      updateSubmissionStatus(submission, "Nilai berhasil disimpan.", "success", false);
+    } catch (error) {
+      updateSubmissionStatus(submission, `Nilai belum berhasil disimpan. ${error.message} Silakan coba lagi setelah diperbaiki.`, "error", true);
+    } finally {
+      submission.isSaving = false;
+    }
+  }
+
+  function createReviewAnswer(label, value) {
+    const answerGroup = document.createElement("div");
+    const answerLabel = document.createElement("p");
+    const answerValue = document.createElement("span");
+    answerGroup.className = "result-review-answer";
+    answerLabel.textContent = label;
+    answerValue.className = "result-review-answer-value";
+    answerValue.textContent = value;
+    answerGroup.append(answerLabel, answerValue);
+    return answerGroup;
+  }
+
+  function createReviewItem(item, index) {
+    const reviewItem = document.createElement("article");
+    const topLine = document.createElement("div");
+    const questionNumber = document.createElement("p");
+    const status = document.createElement("p");
+    const expression = document.createElement("p");
+    const answers = document.createElement("div");
+    reviewItem.className = "result-review-item";
+    reviewItem.dataset.state = item.isCorrect ? "correct" : "incorrect";
+    topLine.className = "result-review-item-topline";
+    questionNumber.className = "result-review-number";
+    questionNumber.textContent = `Soal ${index + 1}`;
+    status.className = "result-review-status";
+    status.textContent = item.isCorrect ? "Benar" : "Perlu ditinjau";
+    expression.className = "result-review-expression multiplication-review-expression";
+    expression.textContent = `${formatOperand(item.firstNumber)} ${item.operation} ${formatOperand(item.secondNumber)} =`;
+    answers.className = "result-review-answers";
+    answers.append(createReviewAnswer("Jawabanmu", item.studentAnswer));
+    if (!item.isCorrect) answers.append(createReviewAnswer("Jawaban benar", item.correctAnswer));
+    topLine.append(questionNumber, status);
+    reviewItem.append(topLine, expression, answers);
+    return reviewItem;
+  }
+
+  function renderResultReview() {
+    if (answerHistory.length === 0) {
+      const emptyMessage = document.createElement("p");
+      emptyMessage.className = "result-review-empty";
+      emptyMessage.textContent = "Belum ada soal yang dijawab pada sesi ini.";
+      resultReviewList.replaceChildren(emptyMessage);
+      return;
+    }
+    resultReviewList.replaceChildren(...answerHistory.map(createReviewItem));
+  }
+
+  function finishExercise() {
+    if (hasFinishedSession) return;
+    hasFinishedSession = true;
+    window.clearInterval(timerId);
+    timerId = null;
+    const totalAnswers = answerHistory.length;
+    const result = {
+      exercise_id: exercise.id,
+      exercise_name: exercise.name,
+      correct: correctAnswers,
+      incorrect: incorrectAnswers,
+      total: totalAnswers,
+      score: correctAnswers
+    };
+    currentSubmission = { result: result, isSaving: false, isSaved: false };
+    document.getElementById("final-score").textContent = correctAnswers;
+    document.getElementById("correct-count").textContent = correctAnswers;
+    document.getElementById("incorrect-count").textContent = incorrectAnswers;
+    document.getElementById("total-count").textContent = totalAnswers;
+    document.getElementById("result-summary").textContent = `Kamu memperoleh ${correctAnswers} poin dalam dua menit.`;
+    renderResultReview();
+    window.MathPractice.showOnly(resultScreen, screens);
+    resultScreen.querySelector("h1").focus({ preventScroll: true });
+    void saveCurrentResult();
+  }
+
+  function startExercise() {
+    window.clearInterval(timerId);
+    correctAnswers = 0;
+    incorrectAnswers = 0;
+    previousQuestionKey = "";
+    hasFinishedSession = false;
+    currentSubmission = null;
+    answerHistory = [];
+    correctProgress.textContent = "0 poin";
+    setSaveStatus("", "idle", false);
+    deadline = Date.now() + exercise.durationSeconds * 1000;
+    window.MathPractice.showOnly(quizScreen, screens);
+    showQuestion();
+    updateTimer();
+    timerId = window.setInterval(updateTimer, 250);
+  }
+
+  answerForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (hasFinishedSession) return;
+    if (Date.now() >= deadline) {
+      finishExercise();
+      return;
+    }
+    const answerText = answerInput.value.trim();
+    if (!/^-?\d+$/.test(answerText)) {
+      answerMessage.textContent = "Masukkan jawaban berupa bilangan bulat, misalnya -3 atau 7.";
+      answerInput.setAttribute("aria-invalid", "true");
+      answerInput.focus();
+      return;
+    }
+    const studentAnswer = Number(answerText);
+    const isCorrect = studentAnswer === currentQuestion.answer;
+    answerHistory.push({
+      firstNumber: currentQuestion.firstNumber,
+      secondNumber: currentQuestion.secondNumber,
+      operation: currentQuestion.operation,
+      studentAnswer: studentAnswer,
+      correctAnswer: currentQuestion.answer,
+      isCorrect: isCorrect
+    });
+    if (isCorrect) {
+      correctAnswers += 1;
+      correctProgress.textContent = `${correctAnswers} poin`;
+    } else {
+      incorrectAnswers += 1;
+    }
+    showQuestion();
+  });
+
+  window.MathPractice.startNegativeNumbersExercise = startExercise;
+  window.MathPractice.retryNegativeNumbersResult = saveCurrentResult;
+})();
