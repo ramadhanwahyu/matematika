@@ -1,153 +1,103 @@
-/* Fungsi kecil yang dapat dipakai ulang oleh halaman latihan berikutnya. */
+/* Shared browser helpers for authenticated Math Practice sessions. */
 (function () {
   "use strict";
-
   window.MathPractice = window.MathPractice || {};
-
-  // Ganti dengan URL deployment Web App yang berakhir dengan /exec setelah Apps Script siap.
   window.MathPractice.config = {
     appsScriptWebAppUrl: "https://script.google.com/macros/s/AKfycbwEVFvjYYO7TOtI-beifE-N7UyMf3eopZsEwEGL7EzNs28EjomjKykq9L43eqcOLHW1/exec"
   };
-
-  const studentStorageKey = "mathPracticeStudent";
-
-  function normalizeStudent(student) {
-    if (!student || typeof student !== "object") return null;
-
-    const studentId = typeof student.student_id === "string" ? student.student_id.trim() : "";
-    const name = typeof student.name === "string" ? student.name.trim() : "";
-    const className = typeof student.class_name === "string" ? student.class_name.trim() : "";
-
-    if (!studentId || !name || !className) return null;
-    if (!/^[A-Za-z0-9_-]+$/.test(studentId) || studentId.length > 32 || name.length > 80 || className.length > 64) {
-      return null;
-    }
-    return { student_id: studentId, name: name, class_name: className };
+  const sessionKey = "mathPracticeSession";
+  function endpoint() {
+    const value = window.MathPractice.config.appsScriptWebAppUrl.trim();
+    if (!value) throw new Error("URL Google Apps Script belum diisi di js/common.js.");
+    return value;
   }
-
-  window.MathPractice.saveStudent = function saveStudent(student) {
-    const normalizedStudent = normalizeStudent(student);
-    if (!normalizedStudent) {
-      throw new Error("Isi ID siswa, nama, dan kelas terlebih dahulu.");
-    }
-
-    try {
-      localStorage.setItem(studentStorageKey, JSON.stringify(normalizedStudent));
-    } catch (error) {
-      throw new Error("Identitas tidak dapat disimpan di perangkat ini. Periksa pengaturan browser.");
-    }
-    return normalizedStudent;
+  function storedSession() {
+    try { return JSON.parse(localStorage.getItem(sessionKey) || "null"); } catch (error) { return null; }
+  }
+  function saveSession(session) {
+    try { localStorage.setItem(sessionKey, JSON.stringify(session)); }
+    catch (error) { throw new Error("Sesi tidak dapat disimpan. Periksa pengaturan browser."); }
+  }
+  async function post(payload, keepalive) {
+    const response = await fetch(endpoint(), { method: "POST", body: JSON.stringify(payload), redirect: "follow", credentials: "omit", keepalive: Boolean(keepalive) });
+    if (!response.ok) throw new Error("Server tidak dapat dihubungi saat ini.");
+    const data = await response.json();
+    if (!data || data.success !== true) throw new Error(data && data.message ? data.message : "Permintaan ditolak server.");
+    return data;
+  }
+  window.MathPractice.login = async function (studentId, password) {
+    const data = await post({ action: "login", student_id: studentId.trim(), password });
+    saveSession({ token: data.token, student: data.student, expires_at: data.expires_at });
+    return data.student;
   };
-
-  window.MathPractice.getStudent = function getStudent() {
-    try {
-      const savedStudent = localStorage.getItem(studentStorageKey);
-      return savedStudent ? normalizeStudent(JSON.parse(savedStudent)) : null;
-    } catch (error) {
-      return null;
-    }
+  window.MathPractice.getStudent = function () {
+    const session = storedSession();
+    if (!session || !session.token || !session.student || Date.parse(session.expires_at) <= Date.now()) return null;
+    return session.student;
   };
-
-  window.MathPractice.clearStudent = function clearStudent() {
-    try {
-      localStorage.removeItem(studentStorageKey);
-    } catch (error) {
-      // Browser dapat menolak akses localStorage pada mode atau pengaturan tertentu.
-    }
+  window.MathPractice.getSessionToken = function () {
+    const session = storedSession();
+    return window.MathPractice.getStudent() && session ? session.token : "";
   };
-
-  window.MathPractice.shuffle = function shuffle(items) {
-    const shuffledItems = [...items];
-    for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
-      const randomIndex = Math.floor(Math.random() * (index + 1));
-      [shuffledItems[index], shuffledItems[randomIndex]] = [shuffledItems[randomIndex], shuffledItems[index]];
-    }
-    return shuffledItems;
+  window.MathPractice.clearStudent = function () { try { localStorage.removeItem(sessionKey); } catch (error) {} };
+  window.MathPractice.logout = async function () {
+    const token = window.MathPractice.getSessionToken();
+    window.MathPractice.clearStudent();
+    if (token) return post({ action: "logout", token }, true);
   };
-
-  window.MathPractice.showOnly = function showOnly(activeElement, allElements) {
-    allElements.forEach(function (element) {
-      element.classList.toggle("is-hidden", element !== activeElement);
-    });
+  window.MathPractice.changePassword = function (currentPassword, newPassword) {
+    return post({ action: "change_password", token: window.MathPractice.getSessionToken(), current_password: currentPassword, new_password: newPassword });
   };
-
-  window.MathPractice.submitExerciseResult = async function submitExerciseResult(result) {
-    const student = window.MathPractice.getStudent();
-    const endpoint = window.MathPractice.config.appsScriptWebAppUrl.trim();
-
-    if (!student) {
-      throw new Error("Identitas siswa tidak ditemukan. Isi kembali identitas sebelum menyimpan nilai.");
-    }
-    if (!endpoint) {
-      throw new Error("URL Google Apps Script belum diisi. Tambahkan URL /exec pada js/common.js.");
-    }
-
-    const payload = {
-      student_id: student.student_id,
-      student_name: student.name,
-      class_name: student.class_name,
-      exercise_id: result.exercise_id,
-      exercise_name: result.exercise_name,
-      correct: result.correct,
-      incorrect: result.incorrect,
-      total: result.total,
-      score: result.score
-    };
-
-    // Tidak menambahkan header kustom agar POST tetap menjadi CORS simple request.
-    const response = await fetch(endpoint, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      redirect: "follow",
-      credentials: "omit"
-    });
-
-    if (!response.ok) {
-      throw new Error("Server tidak dapat menyimpan nilai saat ini.");
-    }
-
-    const responseData = await response.json();
-    if (!responseData || responseData.success !== true) {
-      throw new Error(responseData && responseData.message ? responseData.message : "Server menolak data hasil latihan.");
-    }
-
-    return { payload: payload, response: responseData };
+  window.MathPractice.shuffle = function (items) {
+    const shuffled = [...items];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+    return shuffled;
   };
-
-  window.MathPractice.findStudentById = async function findStudentById(studentId) {
-    const endpoint = window.MathPractice.config.appsScriptWebAppUrl.trim();
-    const cleanStudentId = typeof studentId === "string" ? studentId.trim() : "";
-
-    if (!cleanStudentId || !/^[A-Za-z0-9_-]+$/.test(cleanStudentId)) {
-      throw new Error("Masukkan ID siswa yang valid terlebih dahulu.");
-    }
-    if (!endpoint) {
-      throw new Error("URL Google Apps Script belum diisi. Tambahkan URL /exec pada js/common.js.");
-    }
-
-    const lookupUrl = new URL(endpoint);
-    lookupUrl.searchParams.set("action", "find_student");
-    lookupUrl.searchParams.set("student_id", cleanStudentId);
-
-    const response = await fetch(lookupUrl.toString(), {
-      method: "GET",
-      redirect: "follow",
-      credentials: "omit"
-    });
-
-    if (!response.ok) {
-      throw new Error("Server tidak dapat mencari ID siswa saat ini.");
-    }
-
-    const responseData = await response.json();
-    if (!responseData || responseData.success !== true) {
-      throw new Error(responseData && responseData.message ? responseData.message : "Server menolak pencarian ID siswa.");
-    }
-    return responseData.student || null;
+  window.MathPractice.showOnly = function (active, all) { all.forEach(function (element) { element.classList.toggle("is-hidden", element !== active); }); };
+  window.MathPractice.submitExerciseResult = async function (result) {
+    if (!window.MathPractice.getStudent()) throw new Error("Sesi berakhir. Masuk kembali untuk menyimpan nilai.");
+    return post({ action: "save_result", token: window.MathPractice.getSessionToken(), result: result });
   };
-
-  const savedStudent = window.MathPractice.getStudent();
-  document.querySelectorAll("[data-student-link]").forEach(function (link) {
-    if (savedStudent) link.textContent = "Ganti identitas";
+  const student = window.MathPractice.getStudent();
+  document.querySelectorAll("[data-student-link]").forEach(function (link) { link.textContent = student ? "Akun siswa" : "Masuk siswa"; });
+  document.querySelectorAll("[data-active-student]").forEach(function (label) {
+    if (!student) return;
+    label.textContent = student.name + " \u00b7 " + student.class_name;
+    label.hidden = false;
   });
+  document.querySelectorAll("[data-logout]").forEach(function (button) {
+    button.addEventListener("click", async function () {
+      button.disabled = true;
+      window.MathPractice.logout().catch(function () {});
+      window.location.replace("../student.html");
+    });
+  });
+  const summary = document.getElementById("student-summary");
+  if (summary && student) {
+    summary.textContent = student.name + " \u00b7 " + student.class_name;
+    summary.setAttribute("aria-label", "Akun aktif: " + student.name + ", kelas " + student.class_name);
+    const actions = summary.parentElement;
+    const accountLink = document.createElement("a");
+    accountLink.className = "back-link";
+    accountLink.href = "../student.html";
+    accountLink.textContent = "Akun siswa";
+    const logout = document.createElement("button");
+    logout.className = "text-button";
+    logout.type = "button";
+    logout.textContent = "Keluar";
+    logout.addEventListener("click", function () {
+      logout.disabled = true;
+      window.MathPractice.logout().catch(function () {});
+      window.location.replace("../student.html");
+    });
+    actions.append(accountLink, logout);
+  }
+  if (summary) {
+    window.addEventListener("pageshow", function () {
+      if (window.MathPractice.getStudent()) return;
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      const destination = parts.length > 1 && parts[parts.length - 2] === "latihan" ? "latihan/" + parts[parts.length - 1] : parts[parts.length - 1];
+      window.location.replace("../student.html?next=" + encodeURIComponent(destination));
+    });
+  }
 })();

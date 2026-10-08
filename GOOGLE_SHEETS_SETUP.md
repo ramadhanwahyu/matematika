@@ -1,88 +1,52 @@
 # Setup Google Sheets dan Google Apps Script
 
-Dokumen ini menghubungkan website statis Math Practice ke satu Google Spreadsheet. Untuk MVP, endpoint ini menyimpan hasil latihan pada sheet `Results`.
+Website statis menggunakan Google Sheets sebagai database akun, sesi, dan nilai latihan. Apps Script memverifikasi kata sandi dan sesi di server; browser tidak mengirim identitas siswa saat menyimpan nilai.
 
-## 1. Buat Spreadsheet
+## 1. Siapkan spreadsheet
 
-1. Buat Google Spreadsheet baru.
-2. Buat sheet bernama `Students`. Baris pertama harus berisi header berikut, dengan urutan bebas tetapi ejaan sama:
+Buat sheet `Students` dengan header berikut (urutan bebas):
 
-   ```text
-   student_id | name | class_name
-   ```
+```text
+student_id | name | class_name | password_salt | password_hash | active
+```
 
-3. Tambahkan satu siswa per baris, misalnya:
+Satu siswa per baris. Isi `student_id`, `name`, dan `class_name`; biarkan `password_salt` serta `password_hash` kosong sampai kata sandi awal dibuat. Isi `active` dengan `TRUE` untuk akun aktif atau `FALSE` untuk menonaktifkannya. Kolom ID sebaiknya berformat **Plain text** dan harus unik.
 
-   ```text
-   S001 | Ahmad | X-A
-   S002 | Siti | X-B
-   ```
+Sheet lama yang hanya berisi tiga kolom perlu ditambah tiga header baru sebelum memakai endpoint versi ini. Apps Script juga membuat sheet `Sessions` saat login pertama. Jangan hapus kolom atau mengubah header yang diwajibkan.
 
-   Jadikan kolom `student_id` berformat **Plain text** agar nol di depan ID numerik tidak hilang. Setiap ID harus unik.
-4. Salin Spreadsheet ID dari URL. Bentuk URL-nya seperti `https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit`; bagian di antara `/d/` dan `/edit` adalah ID yang dibutuhkan.
+## 2. Pasang Apps Script dan buat kata sandi sementara
 
-## 2. Tambahkan Apps Script
+1. Dari spreadsheet, pilih **Extensions > Apps Script**.
+2. Ganti isi `Code.gs` dengan [google-apps-script/Code.gs](google-apps-script/Code.gs).
+3. Isi `SPREADSHEET_ID` dengan ID dari URL Google Sheets.
+4. Simpan. Di editor Apps Script, pilih fungsi `initializeStudentPassword`, lalu tekan **Run** dan berikan izin saat diminta.
+5. Dialog meminta ID siswa dan kata sandi sementara minimal 8 karakter. Jalankan sekali untuk setiap siswa dan bagikan kata sandi itu secara pribadi. Fungsi menyimpan salt dan hash, bukan kata sandi biasa.
+6. Jika nanti perlu reset kata sandi, jalankan kembali fungsi yang sama untuk akun itu. Minta siswa mengganti kata sandi sementara setelah masuk.
 
-1. Dari Spreadsheet, pilih **Extensions > Apps Script**.
-2. Ganti isi file `Code.gs` dengan isi [google-apps-script/Code.gs](google-apps-script/Code.gs) di proyek ini.
-3. Ubah nilai berikut dengan Spreadsheet ID Anda:
+Jangan membagikan akses edit spreadsheet kepada siswa. Jangan memasukkan kata sandi ke sel sheet atau source frontend. Hash memakai HMAC-SHA-256 berulang dengan salt unik; Apps Script membatasi percobaan login hingga lima kegagalan per ID dalam jendela penguncian 15 menit.
 
-   ```javascript
-   const SPREADSHEET_ID = 'GANTI_DENGAN_ID_SPREADSHEET_ANDA';
-   ```
+## 3. Deploy Web App
 
-4. Simpan proyek Apps Script.
+Deploy sebagai **Web app**, pilih **Execute as: Me**, dan izinkan akses yang cocok untuk siswa yang tidak masuk ke akun Google (biasanya **Anyone**). Selesaikan otorisasi, salin URL `/exec`, lalu setiap pembaruan Apps Script deploy sebagai versi baru.
 
-Sheet `Results` akan dibuat otomatis ketika kiriman hasil pertama berhasil diterima. Kolomnya adalah:
+Di `js/common.js`, pastikan `appsScriptWebAppUrl` menunjuk URL `/exec` yang baru. Frontend mengirim POST JSON tanpa header kustom agar request lintas origin tetap sederhana. Jangan menaruh credential Google atau kata sandi di frontend.
+
+## 4. Alur penggunaan
+
+1. Siswa membuka **Masuk siswa**, mengisi ID dan kata sandi sementara dari guru.
+2. Sesi berlaku 12 jam dan disimpan pada perangkat untuk berpindah antarhalaman latihan tanpa mengetik ID lagi. Halaman latihan memeriksa sesi server saat menyimpan nilai.
+3. Siswa dapat membuka **Akun siswa** untuk mengganti kata sandi. Kata sandi lama harus benar; sesi lain pada akun tersebut dicabut, sesi yang dipakai untuk mengganti tetap berlaku.
+4. Tombol **Keluar** mencabut sesi server dan menghapus sesi lokal.
+5. Apps Script menentukan ID, nama, dan kelas hasil dari sesi tersimpan. Perubahan identitas pada browser tidak dapat mengubah pemilik nilai.
+
+Nilai masuk ke sheet `Results` dengan header:
 
 ```text
 timestamp | student_id | student_name | class_name | exercise_id | exercise_name | correct | incorrect | total | score
 ```
 
-Timestamp dibuat di Apps Script, bukan oleh browser.
+Timestamp dibuat di Apps Script. `score` mengikuti jenis latihan: bisa berupa nilai 0–100 atau jumlah jawaban benar.
 
-Kolom `score` mengikuti jenis latihan. Pada Penjumlahan Pecahan nilainya 0–100, sedangkan pada Perkalian Cepat nilainya adalah jumlah jawaban benar sehingga dapat melebihi 100.
+## Keamanan dan batasan
 
-## 3. Deploy sebagai Web App
-
-1. Pilih **Deploy > New deployment**.
-2. Pilih tipe **Web app**.
-3. Pilih **Execute as: Me** agar script dapat menulis ke Spreadsheet milik Anda.
-4. Pada akses, pilih opsi yang mengizinkan siswa membuka Web App tanpa akun Google. Nama pilihan dapat berbeda menurut jenis akun Google/Workspace; untuk GitHub Pages, umumnya diperlukan **Anyone**.
-5. Deploy, selesaikan proses otorisasi, lalu salin URL deployment yang berakhir dengan `/exec`. Setelah memperbarui `Code.gs` di masa mendatang, deploy **versi baru** agar endpoint menggunakan kode terbaru.
-
-Gunakan URL `/exec`, bukan URL `/dev`; URL `/dev` hanya untuk editor Apps Script.
-
-## 4. Hubungkan website
-
-Di [js/common.js](js/common.js), ganti nilai kosong berikut dengan URL `/exec` tadi:
-
-```javascript
-window.MathPractice.config = {
-  appsScriptWebAppUrl: ""
-};
-```
-
-Jangan menaruh password, API key, atau credential Google di JavaScript frontend.
-
-Frontend mengirim POST tanpa header kustom sehingga tetap menjadi CORS simple request dan tidak memicu preflight. Ia menunggu respons JSON dari Apps Script sebelum menampilkan status “Nilai berhasil disimpan.”
-
-## 5. Uji satu data
-
-1. Buka website melalui server statis atau hosting Anda, bukan langsung dari `file://`.
-2. Masukkan ID siswa yang ada di sheet `Students`, lalu tekan **Cari**. Nama dan kelas harus terisi otomatis.
-3. Selesaikan latihan sampai halaman hasil.
-4. Pastikan status berubah dari “Menyimpan nilai...” menjadi “Nilai berhasil disimpan.”
-5. Buka sheet `Results` dan periksa bahwa satu baris baru muncul dengan timestamp dari Apps Script.
-
-Jika muncul status gagal, periksa URL `/exec`, pengaturan akses deployment, Spreadsheet ID, dan koneksi. Tombol **Coba simpan lagi** tersedia tanpa mengulang kuis. Jika browser tidak dapat mengonfirmasi respons jaringan, periksa sheet sebelum mencoba lagi untuk menghindari baris ganda.
-
-## Kecepatan pencarian siswa
-
-Data sheet `Students` disimpan sementara pada cache Apps Script selama 5 menit. Pencarian pertama setelah cache kosong dapat lebih lambat karena Apps Script perlu membaca Spreadsheet; pencarian berikutnya biasanya lebih cepat, termasuk untuk ID yang tidak ditemukan.
-
-Setelah mengubah data siswa di Google Sheets, perubahan dapat terlihat di website paling lambat sekitar 5 menit. Untuk perubahan yang perlu segera berlaku, tunggu cache tersebut habis sebelum melakukan pencarian ulang.
-
-## Keamanan dan batasan MVP
-
-Web App yang dapat menerima data dari website statis bukan sistem autentikasi kuat. Endpoint pencarian membuat nama dan kelas dari ID yang diketahui dapat dibaca oleh pengunjung website. Data identitas disimpan di `localStorage` perangkat dan payload dapat dikirim langsung oleh siapa pun yang mengetahui URL endpoint. Pendekatan ini cocok untuk MVP kelas dengan data non-sensitif, bukan untuk data pribadi sensitif, nilai resmi, atau kontrol akses guru.
+Token sesi disimpan dalam bentuk hash di sheet `Sessions`, dengan waktu kedaluwarsa dan status pencabutan. Session token pada browser adalah kredensial sementara; siswa tetap harus keluar pada perangkat bersama. Endpoint Apps Script yang dapat diakses publik tetap dapat diserang secara otomatis, dan spreadsheet bukan backend autentikasi khusus. Gunakan untuk latihan dengan risiko rendah; untuk nilai resmi atau data sensitif, gunakan layanan autentikasi/backend yang dikelola khusus.

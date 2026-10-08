@@ -1,150 +1,62 @@
 (function () {
   "use strict";
-
-  const studentForm = document.getElementById("student-form");
-  const studentIdInput = document.getElementById("student-id-input");
-  const nameInput = document.getElementById("student-name-input");
-  const classNameInput = document.getElementById("class-name-input");
-  const formMessage = document.getElementById("student-form-message");
-  const clearStudentButton = document.getElementById("clear-student-button");
-  const searchStudentButton = document.getElementById("search-student-button");
-  const lookupStatus = document.getElementById("lookup-status");
-  const studentIdPattern = /^[A-Za-z0-9_-]+$/;
-  const requestedDestination = new URLSearchParams(window.location.search).get("next");
-  let matchedStudentId = "";
-  let isSearching = false;
-  let searchRequestNumber = 0;
-
-  function getSafeDestination() {
-    if (!requestedDestination || requestedDestination.startsWith("//") || /^[a-z][a-z\d+.-]*:/i.test(requestedDestination)) {
-      return "index.html";
-    }
-    return requestedDestination;
+  const next = new URLSearchParams(window.location.search).get("next");
+  function safeNext() {
+    if (!next || next.startsWith("//") || /^[a-z][a-z\d+.-]*:/i.test(next)) return "index.html";
+    return next;
   }
-
-  function showMessage(message, field) {
-    formMessage.textContent = message;
-    formMessage.dataset.state = "error";
-    [studentIdInput, nameInput, classNameInput].forEach(function (input) {
-      input.removeAttribute("aria-invalid");
-    });
-    if (field) {
-      field.setAttribute("aria-invalid", "true");
-      field.focus();
-    }
+  const loginForm = document.getElementById("login-form");
+  const passwordForm = document.getElementById("password-form");
+  const loginMessage = document.getElementById("login-message");
+  const passwordMessage = document.getElementById("password-message");
+  const account = document.getElementById("account-panel");
+  const loginPanel = document.getElementById("login-panel");
+  function report(node, message, state) { node.textContent = message; node.dataset.state = state; }
+  function showAccount(student) {
+    loginPanel.classList.add("is-hidden");
+    account.classList.remove("is-hidden");
+    document.getElementById("account-name").textContent = student.name;
+    document.getElementById("account-class").textContent = student.class_name;
   }
-
-  function fillStudentForm(student) {
-    studentIdInput.value = student.student_id;
-    nameInput.value = student.name;
-    classNameInput.value = student.class_name;
-    clearStudentButton.classList.remove("is-hidden");
+  const saved = window.MathPractice.getStudent();
+  if (saved) {
+    if (next) window.location.replace(safeNext());
+    else showAccount(saved);
   }
-
-  function clearFoundStudent() {
-    nameInput.value = "";
-    classNameInput.value = "";
-    matchedStudentId = "";
-  }
-
-  function setLookupStatus(message, state) {
-    lookupStatus.textContent = message;
-    lookupStatus.dataset.state = state;
-  }
-
-  async function searchStudent() {
-    const studentId = studentIdInput.value.trim();
-    if (!studentId || !studentIdPattern.test(studentId)) {
-      showMessage("Masukkan ID siswa yang valid terlebih dahulu.", studentIdInput);
-      return;
-    }
-    if (isSearching) return;
-
-    const currentRequest = searchRequestNumber + 1;
-    searchRequestNumber = currentRequest;
-    isSearching = true;
-    searchStudentButton.disabled = true;
-    searchStudentButton.textContent = "Mencari...";
-    setLookupStatus("Mencari data siswa...", "pending");
-    formMessage.textContent = "";
-
-    try {
-      const student = await window.MathPractice.findStudentById(studentId);
-      if (currentRequest !== searchRequestNumber) return;
-
-      if (!student) {
-        clearFoundStudent();
-        setLookupStatus("ID siswa tidak ditemukan. Periksa kembali ID yang dimasukkan.", "error");
-        return;
-      }
-
-      studentIdInput.value = student.student_id;
-      nameInput.value = student.name;
-      classNameInput.value = student.class_name;
-      matchedStudentId = student.student_id;
-      setLookupStatus("Data siswa ditemukan. Nama dan kelas sudah terisi.", "success");
-    } catch (error) {
-      if (currentRequest !== searchRequestNumber) return;
-      clearFoundStudent();
-      setLookupStatus(`Data siswa belum dapat dicari. ${error.message}`, "error");
-    } finally {
-      if (currentRequest === searchRequestNumber) {
-        isSearching = false;
-        searchStudentButton.disabled = false;
-        searchStudentButton.textContent = "Cari";
-      }
-    }
-  }
-
-  const savedStudent = window.MathPractice.getStudent();
-  if (savedStudent) {
-    fillStudentForm(savedStudent);
-    matchedStudentId = savedStudent.student_id;
-    setLookupStatus("Identitas tersimpan siap digunakan. Cari ID lagi jika ingin memperbarui data dari sheet.", "success");
-  }
-
-  studentForm.addEventListener("submit", function (event) {
+  loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
-    const studentId = studentIdInput.value.trim();
-    const name = nameInput.value.trim();
-    const className = classNameInput.value.trim();
-
-    if (!studentId || !name || !className || matchedStudentId !== studentId) {
-      showMessage("Cari ID siswa terlebih dahulu, lalu lanjutkan setelah nama dan kelas terisi.", studentIdInput);
-      return;
-    }
-    if (!studentIdPattern.test(studentId)) {
-      showMessage("ID siswa hanya boleh berisi huruf, angka, tanda hubung, atau garis bawah.", studentIdInput);
-      return;
-    }
-
+    const button = loginForm.querySelector("button[type=submit]");
+    button.disabled = true;
+    report(loginMessage, "Memeriksa akun…", "pending");
     try {
-      window.MathPractice.saveStudent({ student_id: studentId, name: name, class_name: className });
-      window.location.assign(getSafeDestination());
-    } catch (error) {
-      showMessage(error.message);
-    }
+      const student = await window.MathPractice.login(loginForm.elements.student_id.value, loginForm.elements.password.value);
+      report(loginMessage, "Berhasil masuk.", "success");
+      window.location.assign(safeNext());
+    } catch (error) { report(loginMessage, error.message, "error"); }
+    finally { button.disabled = false; }
   });
-
-  window.MathPractice.clearSavedStudent = function clearSavedStudent() {
-    window.MathPractice.clearStudent();
-    studentForm.reset();
-    clearFoundStudent();
-    setLookupStatus("", "idle");
-    formMessage.textContent = "Identitas tersimpan telah dihapus dari perangkat ini.";
-    formMessage.dataset.state = "success";
-    clearStudentButton.classList.add("is-hidden");
-    studentIdInput.focus();
-  };
-
-  studentIdInput.addEventListener("input", function () {
-    searchRequestNumber += 1;
-    isSearching = false;
-    searchStudentButton.disabled = false;
-    searchStudentButton.textContent = "Cari";
-    clearFoundStudent();
-    setLookupStatus("", "idle");
+  passwordForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const current = passwordForm.elements.current_password.value;
+    const nextPassword = passwordForm.elements.new_password.value;
+    if (nextPassword !== passwordForm.elements.confirm_password.value) { report(passwordMessage, "Kata sandi baru belum sama.", "error"); return; }
+    if (nextPassword.length < 8) { report(passwordMessage, "Gunakan sedikitnya 8 karakter.", "error"); return; }
+    const button = passwordForm.querySelector("button[type=submit]");
+    button.disabled = true;
+    report(passwordMessage, "Menyimpan kata sandi…", "pending");
+    try {
+      await window.MathPractice.changePassword(current, nextPassword);
+      passwordForm.reset();
+      report(passwordMessage, "Kata sandi berhasil diganti. Sesi lain telah dikeluarkan.", "success");
+    } catch (error) { report(passwordMessage, error.message, "error"); }
+    finally { button.disabled = false; }
   });
-
-  window.MathPractice.searchStudentById = searchStudent;
+  document.getElementById("continue-button").addEventListener("click", function () { window.location.assign(safeNext()); });
+  document.getElementById("logout-button").addEventListener("click", function () {
+    window.MathPractice.logout().catch(function () {});
+    account.classList.add("is-hidden");
+    loginPanel.classList.remove("is-hidden");
+    loginForm.reset();
+    report(loginMessage, "Anda sudah keluar dari perangkat ini.", "success");
+  });
 })();

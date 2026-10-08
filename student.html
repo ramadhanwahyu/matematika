@@ -3,50 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Simpan identitas siswa sebelum memulai latihan matematika." />
-    <title>Identitas Siswa | Math Practice</title>
+    <meta name="description" content="Masuk dan kelola akun latihan matematika." />
+    <title>Akun Siswa | Math Practice</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body class="quiz-page">
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="brand" href="index.html" aria-label="Math Practice, beranda">Math<span>Practice</span></a>
-        <a class="back-link" href="index.html">← Kembali ke beranda</a>
-      </div>
-    </header>
-
+    <header class="site-header"><div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Math Practice, beranda">Math<span>Practice</span></a>
+      <a class="back-link" href="index.html">← Kembali ke latihan</a>
+    </div></header>
     <main class="quiz-main container">
-      <section class="card quiz-card student-card" aria-labelledby="student-title">
-        <p class="eyebrow">Akses latihan</p>
-        <h1 id="student-title">Identitas siswa</h1>
-        <p class="intro-text">Masukkan ID yang terdaftar, lalu periksa nama dan kelas sebelum memulai latihan.</p>
-        <form id="student-form" class="student-form" novalidate>
-          <div class="field-group">
-            <label for="student-id-input">ID siswa</label>
-            <div class="student-id-row">
-              <input id="student-id-input" name="student_id" type="text" autocomplete="off" maxlength="32" aria-describedby="student-id-help student-form-message lookup-status" />
-              <button id="search-student-button" class="button button-outline button-small" type="button" onclick="window.MathPractice.searchStudentById()">Cari</button>
-            </div>
-            <p id="student-id-help" class="field-help">Contoh: S001</p>
-          </div>
-          <div class="field-group">
-            <label for="student-name-input">Nama</label>
-            <input id="student-name-input" name="name" type="text" autocomplete="name" maxlength="80" readonly aria-describedby="student-form-message lookup-status" />
-          </div>
-          <div class="field-group">
-            <label for="class-name-input">Kelas</label>
-            <input id="class-name-input" name="class_name" type="text" autocomplete="off" maxlength="64" readonly aria-describedby="student-form-message lookup-status" />
-            <p class="field-help">Nama dan kelas akan terisi setelah ID ditemukan.</p>
-          </div>
-          <p id="lookup-status" class="lookup-status" role="status" aria-live="polite"></p>
-          <p id="student-form-message" class="form-message" role="alert"></p>
-          <button class="button button-primary" type="submit">Simpan dan lanjutkan</button>
+      <section id="login-panel" class="card quiz-card student-card" aria-labelledby="student-title">
+        <p class="eyebrow">Akses latihan</p><h1 id="student-title">Masuk siswa</h1>
+        <p class="intro-text">Masuk satu kali untuk membuka semua latihan. Gunakan ID dan kata sandi dari guru.</p>
+        <form id="login-form" class="student-form" novalidate>
+          <div class="field-group"><label for="student-id">ID siswa</label><input id="student-id" name="student_id" type="text" autocomplete="username" maxlength="32" required /></div>
+          <div class="field-group"><label for="student-password">Kata sandi</label><input id="student-password" name="password" type="password" autocomplete="current-password" maxlength="128" required /></div>
+          <p id="login-message" class="form-message" role="status" aria-live="polite"></p>
+          <button class="button button-primary" type="submit">Masuk</button>
         </form>
-        <button id="clear-student-button" class="text-button is-hidden" type="button" onclick="window.MathPractice.clearSavedStudent()">Hapus identitas tersimpan</button>
+      </section>
+      <section id="account-panel" class="card quiz-card student-card is-hidden" aria-labelledby="account-title">
+        <p class="eyebrow">Akun siswa</p><h1 id="account-title">Halo, <span id="account-name"></span></h1>
+        <p id="account-class" class="intro-text"></p>
+        <div class="account-actions"><button id="continue-button" class="button button-primary" type="button">Lanjut ke latihan</button><button id="logout-button" class="button button-outline" type="button">Keluar</button></div>
+        <hr class="form-divider" />
+        <h2>Ganti kata sandi</h2><p class="field-help">Gunakan sedikitnya 8 karakter. Kata sandi baru berlaku untuk masuk berikutnya.</p>
+        <form id="password-form" class="student-form" novalidate>
+          <div class="field-group"><label for="current-password">Kata sandi saat ini</label><input id="current-password" name="current_password" type="password" autocomplete="current-password" maxlength="128" required /></div>
+          <div class="field-group"><label for="new-password">Kata sandi baru</label><input id="new-password" name="new_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required /></div>
+          <div class="field-group"><label for="confirm-password">Ulangi kata sandi baru</label><input id="confirm-password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required /></div>
+          <p id="password-message" class="form-message" role="status" aria-live="polite"></p>
+          <button class="button button-primary" type="submit">Simpan kata sandi baru</button>
+        </form>
       </section>
     </main>
-
-    <script src="js/common.js"></script>
-    <script src="js/student.js"></script>
+    <script src="js/common.js"></script><script src="js/student.js"></script>
   </body>
 </html>
