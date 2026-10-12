@@ -1,5 +1,8 @@
 // Isi dengan ID Spreadsheet dari URL Google Sheets Anda.
 const SPREADSHEET_ID = 'GANTI_DENGAN_ID_SPREADSHEET_ANDA';
+// Ganti dengan password guru yang kuat sebelum deploy. Password ini hanya diperiksa server.
+const TEACHER_PASSWORD = 'GANTI_DENGAN_PASSWORD_GURU_YANG_KUAT';
+const TEACHER_SESSION_SECONDS = 1800;
 const RESULTS_SHEET_NAME = 'Results';
 const STUDENTS_SHEET_NAME = 'Students';
 const STUDENTS_HEADERS = ['student_id', 'name', 'class_name'];
@@ -20,12 +23,13 @@ const RESULTS_HEADERS = [
 
 function doPost(e) {
   try {
-    ensureSpreadsheetId();
     if (!e || !e.postData || !e.postData.contents) {
       throw new Error('Body JSON tidak ditemukan.');
     }
 
     const payload = JSON.parse(e.postData.contents);
+    if (payload.action) return createJsonResponse(handleTeacherAction(payload));
+    ensureSpreadsheetId();
     const result = validateResultPayload(payload);
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     const sheet = getOrCreateResultsSheet(spreadsheet);
@@ -67,6 +71,75 @@ function doGet(e) {
     console.error(error);
     return createJsonResponse({ success: false, message: error.message || 'Terjadi kesalahan di server.' });
   }
+}
+
+function handleTeacherAction(payload) {
+  const action = String(payload.action || '');
+  if (action === 'teacher_login') {
+    if (TEACHER_PASSWORD.indexOf('GANTI_DENGAN_') === 0) throw new Error('Password guru belum dikonfigurasi di Code.gs.');
+    if (String(payload.password || '') !== TEACHER_PASSWORD) throw new Error('Password tidak sesuai.');
+    const token = Utilities.getUuid() + Utilities.getUuid();
+    CacheService.getScriptCache().put('teacher_session_' + token, '1', TEACHER_SESSION_SECONDS);
+    return { success: true, token: token, expires_in: TEACHER_SESSION_SECONDS };
+  }
+  const token = String(payload.token || '');
+  const cache = CacheService.getScriptCache();
+  if (!token || cache.get('teacher_session_' + token) !== '1') throw new Error('Sesi guru berakhir. Silakan masuk kembali.');
+  if (action === 'teacher_logout') { cache.remove('teacher_session_' + token); return { success: true }; }
+  ensureSpreadsheetId();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(RESULTS_SHEET_NAME);
+    if (!sheet || sheet.getLastRow() < 2) return action === 'teacher_list' ? { success: true, results: [] } : { success: true, deleted: 0 };
+    const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, RESULTS_HEADERS.length).getValues();
+    if (action === 'teacher_list') {
+      const results = rows.map(function(row, i) { return { row: i + 2, signature: JSON.stringify(row.map(function(value) { return value instanceof Date ? value.toISOString() : String(value); })), timestamp: row[0] instanceof Date ? row[0].toISOString() : String(row[0]), student_id: String(row[1]), student_name: String(row[2]), class_name: String(row[3]), exercise_id: String(row[4]), exercise_name: String(row[5]), correct: Number(row[6]) || 0, incorrect: Number(row[7]) || 0, total: Number(row[8]) || 0, score: Number(row[9]) || 0 }; });
+      return { success: true, results: results };
+    }
+    let removeRows = [];
+    if (action === 'teacher_delete') {
+      const rowNumber = Number(payload.row);
+      if (!Number.isInteger(rowNumber) || rowNumber < 2 || rowNumber > sheet.getLastRow()) throw new Error('Nilai yang dipilih sudah tidak tersedia. Muat ulang daftar nilai.');
+      const currentSignature = JSON.stringify(sheet.getRange(rowNumber, 1, 1, RESULTS_HEADERS.length).getValues()[0].map(function(value) { return value instanceof Date ? value.toISOString() : String(value); }));
+      if (!payload.signature || currentSignature !== payload.signature) throw new Error('Daftar nilai berubah. Muat ulang sebelum menghapus nilai.');
+      removeRows = [rowNumber];
+    } else if (action === 'teacher_clear_exercise') {
+      const exerciseId = requireText(payload.exercise_id, 'exercise_id', 100);
+      rows.forEach(function(row, i) { if (String(row[4]) === exerciseId) removeRows.push(i + 2); });
+    } else if (action === 'teacher_clear_all') {
+      removeRows = rows.map(function(_, i) { return i + 2; });
+    } else if (action === 'teacher_dedupe') {
+      const exerciseId = requireText(payload.exercise_id, 'exercise_id', 100);
+      const best = {};
+      rows.forEach(function(row, i) {
+        if (String(row[4]) !== exerciseId) return;
+        const key = String(row[1]);
+        const score = Number(row[9]) || 0;
+        const timestamp = row[0] instanceof Date ? row[0].getTime() : new Date(row[0]).getTime() || 0;
+        if (!best[key] || score > best[key].score || (score === best[key].score && timestamp > best[key].timestamp)) best[key] = { score: score, timestamp: timestamp, row: i + 2 };
+      });
+      const keep = {};
+      Object.keys(best).forEach(function(key) { keep[best[key].row] = true; });
+      rows.forEach(function(row, i) { if (String(row[4]) === exerciseId && !keep[i + 2]) removeRows.push(i + 2); });
+    } else throw new Error('Aksi guru tidak dikenal.');
+    deleteRowsInRanges(sheet, removeRows);
+    return { success: true, deleted: removeRows.length };
+  } finally { lock.releaseLock(); }
+}
+
+function deleteRowsInRanges(sheet, rowNumbers) {
+  const sorted = rowNumbers.slice().sort(function(a, b) { return b - a; });
+  let end = null;
+  let start = null;
+  sorted.forEach(function(rowNumber) {
+    if (end === null) { start = rowNumber; end = rowNumber; return; }
+    if (rowNumber === start - 1) { start = rowNumber; return; }
+    sheet.deleteRows(start, end - start + 1);
+    start = rowNumber;
+    end = rowNumber;
+  });
+  if (end !== null) sheet.deleteRows(start, end - start + 1);
 }
 
 function ensureSpreadsheetId() {

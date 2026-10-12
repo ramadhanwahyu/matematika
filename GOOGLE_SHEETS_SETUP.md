@@ -43,7 +43,15 @@ Timestamp dibuat di Apps Script, bukan oleh browser.
 
 Kolom `score` mengikuti jenis latihan. Pada Penjumlahan Pecahan nilainya 0–100, sedangkan pada Perkalian Cepat nilainya adalah jumlah jawaban benar sehingga dapat melebihi 100.
 
-## 3. Deploy sebagai Web App
+## 3. Konfigurasi akses guru
+
+Di bagian atas `google-apps-script/Code.gs`, isi `TEACHER_PASSWORD` dengan password kuat yang hanya dibagikan kepada guru. Password ini tidak dimasukkan ke website. Sesi guru berlaku 30 menit, berada di cache Apps Script, dan tidak disimpan di browser; saat sesi habis guru masuk kembali. Setiap perubahan pada `Code.gs` memerlukan deploy versi baru.
+
+Halaman guru tersedia di `guru.html`. Daftar nilai dan tindakan hapus hanya dapat dipanggil dengan sesi yang dibuat setelah verifikasi password oleh Apps Script. Penghapusan semua nilai memerlukan konfirmasi dialog dan mengetik `HAPUS`. Hasil duplikat dikelompokkan berdasarkan ID siswa pada latihan terpilih; nilai tertinggi dipertahankan, dan jika sama, hasil terbaru dipilih.
+
+**Batas keamanan:** Web App tetap dapat diakses publik agar siswa dapat mengirim nilai. Password yang disimpan sebagai teks di `Code.gs` adalah gerbang sederhana, bukan sistem akun guru lengkap. Siapa pun yang memiliki password dapat mengelola seluruh nilai; batasi pembagian password dan ganti jika diketahui pihak lain. Apps Script juga tidak menyediakan pembatasan percobaan login yang kuat pada rancangan ini.
+
+## 4. Deploy sebagai Web App
 
 1. Pilih **Deploy > New deployment**.
 2. Pilih tipe **Web app**.
@@ -53,7 +61,7 @@ Kolom `score` mengikuti jenis latihan. Pada Penjumlahan Pecahan nilainya 0–100
 
 Gunakan URL `/exec`, bukan URL `/dev`; URL `/dev` hanya untuk editor Apps Script.
 
-## 4. Hubungkan website
+## 5. Hubungkan website
 
 Di [js/common.js](js/common.js), ganti nilai kosong berikut dengan URL `/exec` tadi:
 
@@ -67,7 +75,7 @@ Jangan menaruh password, API key, atau credential Google di JavaScript frontend.
 
 Frontend mengirim POST tanpa header kustom sehingga tetap menjadi CORS simple request dan tidak memicu preflight. Ia menunggu respons JSON dari Apps Script sebelum menampilkan status “Nilai berhasil disimpan.”
 
-## 5. Uji satu data
+## 6. Uji satu data
 
 1. Buka website melalui server statis atau hosting Anda, bukan langsung dari `file://`.
 2. Masukkan ID siswa yang ada di sheet `Students`, lalu tekan **Cari**. Nama dan kelas harus terisi otomatis.

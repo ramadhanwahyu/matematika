@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "Math Practice"
-description: "Website latihan matematika berbahasa Indonesia dengan nuansa buku kerja yang fokus dan ramah."
+description: "Website latihan matematika berbahasa Indonesia dengan ruang guru untuk memantau dan mengelola nilai."
 colors:
   background: "#F4F7FB"
   surface: "#FFFFFF"
@@ -50,6 +50,7 @@ Lembar kerja matematika yang terbitan profesional: tinta gelap, aturan garis tip
 - **Target market(s) and evidence:** Indonesia; bahasa dan konteks latihan mengikuti permintaan proyek.
 - **Locale(s) and language policy:** Bahasa Indonesia untuk semua teks antarmuka; angka menggunakan digit Latin.
 - **Usage scene:** Latihan singkat di ponsel maupun laptop, sehingga navigasi dan kolom jawaban harus mudah disentuh.
+- **Teacher workflow:** Guru meninjau rekap kelas di laptop atau ponsel; tabel mengutamakan keterbacaan, filter latihan, dan tindakan berisiko yang jelas.
 - **Register:** Hybrid. Beranda berfungsi sebagai katalog pilihan latihan yang ringkas; halaman kuis mengutamakan kejernihan dan keterbacaan.
 - **Memorable signature:** Persamaan pecahan dan eksponen ditulis seperti notasi buku teks, dengan pembilang dan penyebut pada garis pecahan yang nyata serta pangkat yang ditampilkan sebagai superskrip.
 - **Restraint:** Kartu, field, dan ringkasan nilai datar, berborder halus, serta tanpa ilustrasi atau gradien dekoratif.
@@ -77,6 +78,10 @@ Kartu menggunakan batas tipis dan bayangan sangat lembut hanya untuk memisahkan 
 Field dan tombol memakai sudut kecil; kartu memakai sudut sedang. Bentuk tidak dibuat pill supaya tetap terasa seperti alat belajar, bukan aplikasi sosial.
 
 ## Components
+
+### Teacher results
+
+Ruang guru memakai bahasa visual lembar rekap: aturan tipis, tinta biru, angka nilai bertabular, dan permukaan putih tanpa ornamen dashboard. Ringkasan membantu pemindaian cepat, sementara tabel tetap menjadi fokus. Pada layar sempit tabel boleh digulir mendatar. Tindakan penghapusan selalu memakai dialog milik aplikasi; penghapusan massal meminta frasa konfirmasi yang diketik.
 
 ### Foundational visual states
 
