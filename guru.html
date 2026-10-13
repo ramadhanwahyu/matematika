@@ -26,11 +26,16 @@
       </section>
       <section id="dashboard" class="is-hidden" aria-labelledby="teacher-title">
           <div class="teacher-heading"><div><p class="eyebrow">Ruang guru</p><h1 id="teacher-title">Hasil latihan siswa</h1><p class="intro-text">Pantau capaian kelas dan kelola kiriman nilai dari satu tempat.</p></div><button id="logout-button" class="button button-outline" type="button" disabled>Keluar</button></div>
-        <section class="teacher-summary" aria-label="Ringkasan nilai"><div><span>Jumlah seluruh hasil</span><strong id="result-count">—</strong></div><div><span>Jenis latihan</span><strong id="exercise-count">—</strong></div><div><span>Rata-rata pada daftar</span><strong id="average-score">—</strong></div></section>
+        <section class="teacher-summary" aria-label="Ringkasan nilai"><div><span>Hasil ditampilkan</span><strong id="result-count">—</strong></div><div><span>Jenis latihan</span><strong id="exercise-count">—</strong></div><div><span>Rata-rata pada daftar</span><strong id="average-score">—</strong></div></section>
         <section class="card teacher-controls" aria-label="Filter dan tindakan nilai">
-          <div class="teacher-filter"><label for="exercise-filter">Nama ujian</label><select id="exercise-filter"><option value="">Semua latihan</option></select><button id="refresh-button" class="button button-outline" type="button" disabled>Muat ulang</button></div>
+          <div class="teacher-filter">
+            <div class="teacher-filter-field"><label for="exercise-filter">Nama ujian</label><select id="exercise-filter"><option value="">Semua latihan</option></select></div>
+            <div class="teacher-filter-field"><label for="class-filter">Kelas</label><select id="class-filter"><option value="">Semua kelas</option></select></div>
+            <button id="refresh-button" class="button button-outline" type="button" disabled>Muat ulang</button>
+            <label class="teacher-check-filter"><input id="best-only-filter" type="checkbox" /><span>Tampilkan nilai tertinggi tiap siswa per latihan</span></label>
+          </div>
           <div class="teacher-actions"><button id="dedupe-button" class="button button-outline" type="button" disabled>Pertahankan nilai tertinggi per siswa</button><button id="clear-exercise-button" class="button button-outline button-danger" type="button" disabled>Hapus nilai latihan ini</button><button id="clear-all-button" class="button button-danger" type="button" disabled>Hapus semua nilai</button></div>
-          <p class="teacher-hint">Deduplikasi menyisakan nilai tertinggi tiap siswa untuk latihan terpilih. Jika nilainya sama, hasil terbaru dipertahankan.</p>
+          <p class="teacher-hint">Filter nilai tertinggi hanya mengubah tampilan dan tidak menghapus data. Jika nilainya sama, hasil terbaru ditampilkan.</p>
           <p id="dashboard-message" class="teacher-message" role="status" aria-live="polite"></p>
         </section>
         <section class="card teacher-table-card" aria-labelledby="scores-title">

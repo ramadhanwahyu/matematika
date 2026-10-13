@@ -6,6 +6,8 @@
   const dashboard = byId("dashboard");
   const loginForm = byId("login-form");
   const filter = byId("exercise-filter");
+  const classFilter = byId("class-filter");
+  const bestOnlyFilter = byId("best-only-filter");
   const body = byId("results-body");
   const dialog = byId("action-dialog");
   let token = "";
@@ -13,6 +15,13 @@
   let pendingAction = null;
   let requestId = 0;
   let actionInProgress = false;
+  const exerciseGroups = [
+    { label: "Kecepatan Berhitung", ids: ["perkalian_cepat_01", "pembagian_cepat_01", "pembagian_lanjutan_01", "bilangan_negatif_01"] },
+    { label: "Pecahan", ids: ["menyamakan_pecahan_01", "penjumlahan_pecahan_01", "perkalian_pecahan_01"] },
+    { label: "Aljabar", ids: ["aljabar_dasar_level_1_01", "aljabar_dasar_01", "soal_cerita_aljabar_level_1_01", "soal_cerita_aljabar_level_2_01"] },
+    { label: "Barisan dan Deret", ids: ["barisan_dasar_01", "barisan_aritmetika_un_01"] },
+    { label: "Eksponen", ids: ["eksponen_dasar_01", "eksponen_01", "eksponen_aljabar_01"] }
+  ];
 
   function message(target, text, state) {
     target.textContent = text || "";
@@ -44,21 +53,36 @@
   });
 
   function currentExercise() { return filter.value; }
-  function visibleResults() { return results.filter((item) => !currentExercise() || item.exercise_id === currentExercise()).sort((a, b) => b.score - a.score || new Date(b.timestamp) - new Date(a.timestamp)); }
+  function exerciseResults() { return results.filter((item) => item.exercise_id === currentExercise()); }
+  function filteredResults() {
+    let items = results.filter((item) => (!currentExercise() || item.exercise_id === currentExercise()) && (!classFilter.value || item.class_name === classFilter.value));
+    if (bestOnlyFilter.checked) {
+      const best = new Map();
+      items.forEach((item) => {
+        const key = `${item.exercise_id}\u0000${item.student_id}`;
+        const previous = best.get(key);
+        if (!previous || item.score > previous.score || (item.score === previous.score && new Date(item.timestamp) > new Date(previous.timestamp))) best.set(key, item);
+      });
+      items = [...best.values()];
+    }
+    return items.sort((a, b) => b.score - a.score || new Date(b.timestamp) - new Date(a.timestamp));
+  }
+  function visibleResults() { return filteredResults(); }
   function updateSummary() {
     const shown = visibleResults();
-    byId("result-count").textContent = String(results.length);
-    byId("exercise-count").textContent = String(new Set(results.map((item) => item.exercise_id)).size);
+    byId("result-count").textContent = String(shown.length);
+    byId("exercise-count").textContent = String(new Set(shown.map((item) => item.exercise_id)).size);
     byId("average-score").textContent = shown.length ? (shown.reduce((sum, item) => sum + item.score, 0) / shown.length).toLocaleString("id-ID", { maximumFractionDigits: 1 }) : "—";
     byId("table-count").textContent = shown.length ? `Menampilkan ${shown.length} hasil` : "";
     const hasFilter = Boolean(currentExercise());
-    byId("dedupe-button").disabled = !hasFilter || shown.length < 2;
-    byId("clear-exercise-button").disabled = !hasFilter || shown.length === 0;
+    byId("dedupe-button").disabled = !hasFilter || exerciseResults().length < 2;
+    byId("clear-exercise-button").disabled = !hasFilter || exerciseResults().length === 0;
     byId("clear-all-button").disabled = results.length === 0;
   }
   function addCell(row, value, className) { const cell = document.createElement("td"); cell.textContent = value; if (className) cell.className = className; row.append(cell); return cell; }
   function render() {
     const shown = visibleResults();
+    byId("scores-title").textContent = bestOnlyFilter.checked ? "Nilai terbaik tiap siswa" : "Nilai tertinggi lebih dulu";
     body.replaceChildren();
     shown.forEach((item) => {
       const row = document.createElement("tr");
@@ -80,14 +104,39 @@
     updateSummary();
   }
   function updateFilterOptions() {
-    const selected = currentExercise() || filter.dataset.initialExercise || "";
+    const selectedExercise = currentExercise() || filter.dataset.initialExercise || "";
+    const selectedClass = classFilter.value || classFilter.dataset.initialClass || "";
+    const bestOnly = bestOnlyFilter.checked || bestOnlyFilter.dataset.initialBest === "true";
     const exercises = new Map(); results.forEach((item) => exercises.set(item.exercise_id, item.exercise_name));
-    filter.replaceChildren(new Option("Semua latihan", ""));
-    [...exercises.entries()].sort((a, b) => a[1].localeCompare(b[1], "id")).forEach(([id, name]) => filter.add(new Option(name, id)));
-    if ([...exercises.keys()].includes(selected)) filter.value = selected;
+    const allOption = new Option("Semua latihan", "");
+    filter.replaceChildren(allOption);
+    const placed = new Set();
+    exerciseGroups.forEach((group) => {
+      const options = group.ids.filter((id) => exercises.has(id));
+      if (!options.length) return;
+      const optgroup = document.createElement("optgroup"); optgroup.label = group.label;
+      options.forEach((id) => { optgroup.append(new Option(exercises.get(id), id)); placed.add(id); });
+      filter.append(optgroup);
+    });
+    const ungrouped = [...exercises.entries()].filter(([id]) => !placed.has(id)).sort((a, b) => a[1].localeCompare(b[1], "id"));
+    if (ungrouped.length) {
+      const optgroup = document.createElement("optgroup"); optgroup.label = "Latihan lainnya";
+      ungrouped.forEach(([id, name]) => optgroup.append(new Option(name, id)));
+      filter.append(optgroup);
+    }
+    if ([...exercises.keys()].includes(selectedExercise)) filter.value = selectedExercise;
+    const classes = [...new Set(results.map((item) => item.class_name).filter(Boolean))].sort((a, b) => a.localeCompare(b, "id"));
+    classFilter.replaceChildren(new Option("Semua kelas", ""));
+    classes.forEach((className) => classFilter.add(new Option(className, className)));
+    if (classes.includes(selectedClass)) classFilter.value = selectedClass;
+    bestOnlyFilter.checked = bestOnly;
     delete filter.dataset.initialExercise;
+    delete classFilter.dataset.initialClass;
+    delete bestOnlyFilter.dataset.initialBest;
     const url = new URL(window.location.href);
     if (filter.value) url.searchParams.set("exercise", filter.value); else url.searchParams.delete("exercise");
+    if (classFilter.value) url.searchParams.set("class", classFilter.value); else url.searchParams.delete("class");
+    if (bestOnlyFilter.checked) url.searchParams.set("best", "1"); else url.searchParams.delete("best");
     history.replaceState(null, "", url);
   }
   async function loadResults() {
@@ -99,6 +148,8 @@
     finally { if (id === requestId) byId("refresh-button").disabled = false; }
   }
   filter.addEventListener("change", render);
+  classFilter.addEventListener("change", render);
+  bestOnlyFilter.addEventListener("change", render);
   byId("refresh-button").addEventListener("click", loadResults);
   function confirmAction(options) {
     pendingAction = options;
@@ -127,11 +178,11 @@
   });
   byId("dedupe-button").addEventListener("click", () => {
     const name = filter.options[filter.selectedIndex].text;
-    confirmAction({ title: "Rapikan nilai ganda?", description: `Untuk ${name}, setiap siswa akan menyisakan satu nilai tertinggi. Nilai lainnya akan dihapus permanen.`, label: "Pertahankan nilai tertinggi", run: () => call("teacher_dedupe", { exercise_id: currentExercise() }), done: (result) => `${result.deleted} nilai lebih rendah dihapus.` });
+    confirmAction({ title: "Rapikan nilai ganda?", description: `Untuk ${name} di semua kelas, setiap siswa akan menyisakan satu nilai tertinggi. Nilai lainnya akan dihapus permanen.`, label: "Pertahankan nilai tertinggi", run: () => call("teacher_dedupe", { exercise_id: currentExercise() }), done: (result) => `${result.deleted} nilai lebih rendah dihapus.` });
   });
   byId("clear-exercise-button").addEventListener("click", () => {
     const name = filter.options[filter.selectedIndex].text;
-    confirmAction({ title: `Hapus semua nilai ${name}?`, description: `Seluruh ${visibleResults().length} hasil pada latihan ini akan dihapus permanen.`, label: "Hapus nilai latihan", typed: "HAPUS", run: () => call("teacher_clear_exercise", { exercise_id: currentExercise() }) });
+    confirmAction({ title: `Hapus semua nilai ${name}?`, description: `Seluruh ${exerciseResults().length} hasil pada latihan ini di semua kelas akan dihapus permanen.`, label: "Hapus nilai latihan", typed: "HAPUS", run: () => call("teacher_clear_exercise", { exercise_id: currentExercise() }) });
   });
   byId("clear-all-button").addEventListener("click", () => {
     confirmAction({ title: "Hapus seluruh data nilai?", description: `Tindakan ini menghapus semua ${results.length} hasil dari setiap latihan secara permanen. Untuk melanjutkan, ketik HAPUS.`, label: "Hapus semua nilai", typed: "HAPUS", run: () => call("teacher_clear_all"), done: (result) => `Seluruh nilai terhapus (${result.deleted} hasil).` });
@@ -142,13 +193,21 @@
     dashboard.classList.add("is-hidden"); loginPanel.classList.remove("is-hidden"); loginForm.reset(); byId("teacher-password").focus();
   }
   byId("logout-button").addEventListener("click", () => logout(true));
-  filter.addEventListener("change", () => {
+  function updateFilterUrl() {
     const url = new URL(window.location.href);
     if (filter.value) url.searchParams.set("exercise", filter.value); else url.searchParams.delete("exercise");
+    if (classFilter.value) url.searchParams.set("class", classFilter.value); else url.searchParams.delete("class");
+    if (bestOnlyFilter.checked) url.searchParams.set("best", "1"); else url.searchParams.delete("best");
     history.replaceState(null, "", url);
-  });
+  }
+  filter.addEventListener("change", updateFilterUrl);
+  classFilter.addEventListener("change", updateFilterUrl);
+  bestOnlyFilter.addEventListener("change", updateFilterUrl);
   const initialExercise = new URLSearchParams(window.location.search).get("exercise");
   if (initialExercise) { filter.dataset.initialExercise = initialExercise; }
+  const initialClass = new URLSearchParams(window.location.search).get("class");
+  if (initialClass) { classFilter.dataset.initialClass = initialClass; }
+  if (new URLSearchParams(window.location.search).get("best") === "1") bestOnlyFilter.dataset.initialBest = "true";
   byId("logout-button").disabled = false;
   byId("refresh-button").disabled = false;
   byId("clear-all-button").disabled = false;
