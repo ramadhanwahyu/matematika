@@ -7,6 +7,7 @@
   const loginForm = byId("login-form");
   const filter = byId("exercise-filter");
   const classFilter = byId("class-filter");
+  const periodFilter = byId("period-filter");
   const bestOnlyFilter = byId("best-only-filter");
   const body = byId("results-body");
   const dialog = byId("action-dialog");
@@ -55,7 +56,18 @@
   function currentExercise() { return filter.value; }
   function exerciseResults() { return results.filter((item) => item.exercise_id === currentExercise()); }
   function filteredResults() {
-    let items = results.filter((item) => (!currentExercise() || item.exercise_id === currentExercise()) && (!classFilter.value || item.class_name === classFilter.value));
+    const periodHours = { "24h": 24, "7d": 24 * 7, "30d": 24 * 30 }[periodFilter.value];
+    const now = Date.now();
+    const cutoff = periodHours ? now - periodHours * 60 * 60 * 1000 : null;
+    let items = results.filter((item) => {
+      if (currentExercise() && item.exercise_id !== currentExercise()) return false;
+      if (classFilter.value && item.class_name !== classFilter.value) return false;
+      if (cutoff !== null) {
+        const timestamp = new Date(item.timestamp).getTime();
+        if (!Number.isFinite(timestamp) || timestamp < cutoff || timestamp > now) return false;
+      }
+      return true;
+    });
     if (bestOnlyFilter.checked) {
       const best = new Map();
       items.forEach((item) => {
@@ -136,6 +148,7 @@
     const url = new URL(window.location.href);
     if (filter.value) url.searchParams.set("exercise", filter.value); else url.searchParams.delete("exercise");
     if (classFilter.value) url.searchParams.set("class", classFilter.value); else url.searchParams.delete("class");
+    if (periodFilter.value !== "all") url.searchParams.set("period", periodFilter.value); else url.searchParams.delete("period");
     if (bestOnlyFilter.checked) url.searchParams.set("best", "1"); else url.searchParams.delete("best");
     history.replaceState(null, "", url);
   }
@@ -149,6 +162,7 @@
   }
   filter.addEventListener("change", render);
   classFilter.addEventListener("change", render);
+  periodFilter.addEventListener("change", render);
   bestOnlyFilter.addEventListener("change", render);
   byId("refresh-button").addEventListener("click", loadResults);
   function confirmAction(options) {
@@ -197,6 +211,7 @@
     const url = new URL(window.location.href);
     if (filter.value) url.searchParams.set("exercise", filter.value); else url.searchParams.delete("exercise");
     if (classFilter.value) url.searchParams.set("class", classFilter.value); else url.searchParams.delete("class");
+    if (periodFilter.value !== "all") url.searchParams.set("period", periodFilter.value); else url.searchParams.delete("period");
     if (bestOnlyFilter.checked) url.searchParams.set("best", "1"); else url.searchParams.delete("best");
     history.replaceState(null, "", url);
   }
@@ -207,6 +222,8 @@
   if (initialExercise) { filter.dataset.initialExercise = initialExercise; }
   const initialClass = new URLSearchParams(window.location.search).get("class");
   if (initialClass) { classFilter.dataset.initialClass = initialClass; }
+  const initialPeriod = new URLSearchParams(window.location.search).get("period");
+  if (["24h", "7d", "30d"].includes(initialPeriod)) periodFilter.value = initialPeriod;
   if (new URLSearchParams(window.location.search).get("best") === "1") bestOnlyFilter.dataset.initialBest = "true";
   byId("logout-button").disabled = false;
   byId("refresh-button").disabled = false;
