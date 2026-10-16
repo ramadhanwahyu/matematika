@@ -10,6 +10,8 @@
 - Deduplikasi berlaku hanya untuk latihan terpilih, dikelompokkan dengan `student_id`, menyisakan nilai terbesar; saat nilai sama, timestamp paling baru dipertahankan. Server menentukan baris yang dihapus.
 - Operasi daftar dan mutasi guru berjalan di Apps Script. Mutasi dilindungi token sesi dan `ScriptLock`; append nilai siswa tetap menerima payload publik sesuai alur latihan.
 - Setelah mutasi berhasil, daftar dimuat ulang dari server. Kegagalan tidak optimistis menghapus baris dari tampilan.
+- Tombol navbar membuka dialog modal rekor pribadi untuk identitas siswa yang tersimpan pada perangkat. Satu rekor tertinggi ditampilkan untuk setiap `exercise_id`; saat skor sama, timestamp terbaru dipakai. Dialog menyediakan keadaan memuat, kosong, gagal, muat ulang, dan tautan identitas bila belum ada siswa tersimpan.
+- Identitas siswa di `localStorage` belum merupakan autentikasi server. Endpoint `student_records` mengikuti batas keamanan MVP yang sama dengan endpoint pencarian siswa; jangan tampilkan data sensitif melalui endpoint publik ini.
 
 ## Kepemilikan komponen
 
@@ -17,6 +19,7 @@
 - Daftar nilai menggunakan tabel HTML semantik, tanpa interaksi seperti spreadsheet.
 - Konfirmasi memakai elemen `<dialog>` modal bawaan dengan fokus awal pada tombol Batal; konfirmasi hapus massal memfokuskan field konfirmasi.
 - `css/style.css` tetap pemilik token dan baseline scrollbar.
+- Dialog rekor pribadi memakai `<dialog>` modal native, dapat ditutup dengan tombol Tutup, Escape, atau backdrop, dan mengembalikan fokus ke tombol navbar. Daftar memakai list semantik dan status pemuatan melalui live region; setiap item memuat nama latihan, skor, dan tanggal hasil terbaik.
 
 | Capability | Canonical owner | Source of truth | Allowed variants | Verification |
 |---|---|---|---|---|
@@ -24,3 +27,4 @@
 | Form | Validasi inline halaman guru | UX-CONTRACT.md | login dan konfirmasi tindakan | submit invalid, sukses, dan error |
 | Scrollbar | Global `css/style.css` | DESIGN.md | geometri overflow tabel | computed style dan gulir sentuh |
 | CRUD | Endpoint server Apps Script dan dialog guru | UX-CONTRACT.md | hapus satu, per latihan, semua, deduplikasi | alur muat, konfirmasi, hasil, dan kegagalan |
+| Personal records | Dialog native `index.html`/`js/home.js` + aksi baca Apps Script `student_records` | UX-CONTRACT.md | satu rekor terbaik per latihan untuk identitas tersimpan | buka/tutup, fokus, kosong, sukses, gagal, muat ulang, responsif |

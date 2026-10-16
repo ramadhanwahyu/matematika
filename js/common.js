@@ -146,6 +146,25 @@
     return responseData.student || null;
   };
 
+  window.MathPractice.getStudentBestRecords = async function getStudentBestRecords() {
+    const student = window.MathPractice.getStudent();
+    const endpoint = window.MathPractice.config.appsScriptWebAppUrl.trim();
+    if (!student) throw new Error("Identitas siswa tidak ditemukan. Simpan identitas untuk melihat rekor.");
+    if (!endpoint) throw new Error("URL Google Apps Script belum diisi. Tambahkan URL /exec pada js/common.js.");
+
+    const lookupUrl = new URL(endpoint);
+    lookupUrl.searchParams.set("action", "student_records");
+    lookupUrl.searchParams.set("student_id", student.student_id);
+    const response = await fetch(lookupUrl.toString(), { method: "GET", redirect: "follow", credentials: "omit" });
+    if (!response.ok) throw new Error("Server tidak dapat memuat rekor saat ini.");
+
+    const responseData = await response.json();
+    if (!responseData || responseData.success !== true || !Array.isArray(responseData.records)) {
+      throw new Error(responseData && responseData.message ? responseData.message : "Server menolak permintaan rekor.");
+    }
+    return responseData.records;
+  };
+
   const savedStudent = window.MathPractice.getStudent();
   document.querySelectorAll("[data-student-link]").forEach(function (link) {
     if (savedStudent) link.textContent = "Ganti identitas";

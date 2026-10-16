@@ -60,17 +60,56 @@ function doGet(e) {
     ensureSpreadsheetId();
     const action = e && e.parameter ? e.parameter.action : '';
 
-    if (action !== 'find_student') {
-      throw new Error('Aksi pencarian tidak valid.');
+    if (action === 'find_student') {
+      const studentId = e.parameter.student_id || '';
+      const student = findStudentById(studentId);
+      return createJsonResponse({ success: true, student: student });
     }
-
-    const studentId = e.parameter.student_id || '';
-    const student = findStudentById(studentId);
-    return createJsonResponse({ success: true, student: student });
+    if (action === 'student_records') {
+      const studentId = requireStudentId(e.parameter.student_id || '');
+      return createJsonResponse({ success: true, records: getStudentBestRecords(studentId) });
+    }
+    throw new Error('Aksi pencarian tidak valid.');
   } catch (error) {
     console.error(error);
     return createJsonResponse({ success: false, message: error.message || 'Terjadi kesalahan di server.' });
   }
+}
+
+function getStudentBestRecords(studentId) {
+  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(RESULTS_SHEET_NAME);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, RESULTS_HEADERS.length).getValues();
+  const bestByExercise = Object.create(null);
+  rows.forEach(function(row) {
+    if (String(row[1]).trim().toUpperCase() !== studentId.toUpperCase()) return;
+    const exerciseId = String(row[4]).trim();
+    if (!exerciseId) return;
+    const score = Number(row[9]) || 0;
+    const timestamp = row[0] instanceof Date ? row[0].getTime() : new Date(row[0]).getTime() || 0;
+    const existing = bestByExercise[exerciseId];
+    if (!existing || score > existing.score || (score === existing.score && timestamp > existing.timestamp)) {
+      bestByExercise[exerciseId] = {
+        exercise_id: exerciseId,
+        exercise_name: String(row[5]),
+        score: score,
+        timestamp: timestamp
+      };
+    }
+  });
+
+  return Object.keys(bestByExercise).map(function(exerciseId) {
+    const record = bestByExercise[exerciseId];
+    return {
+      exercise_id: record.exercise_id,
+      exercise_name: record.exercise_name,
+      score: record.score,
+      timestamp: record.timestamp ? new Date(record.timestamp).toISOString() : ''
+    };
+  }).sort(function(a, b) {
+    return a.exercise_name.localeCompare(b.exercise_name, 'id');
+  });
 }
 
 function handleTeacherAction(payload) {

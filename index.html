@@ -13,6 +13,7 @@
         <a class="brand" href="index.html" aria-label="Math Practice, beranda">Math<span>Practice</span></a>
         <nav class="header-actions" aria-label="Navigasi utama">
           <p class="header-note">Latihan matematika</p>
+          <button id="open-personal-records" class="records-nav-button" type="button" aria-haspopup="dialog" aria-controls="personal-records">Rekor saya</button>
           <a class="student-link" data-student-link href="student.html">Identitas siswa</a>
         </nav>
       </div>
@@ -29,6 +30,25 @@
           </div>
         </div>
       </section>
+
+      <dialog id="personal-records" class="personal-records-dialog" aria-labelledby="personal-records-heading" aria-describedby="personal-records-status">
+        <div class="personal-records-panel">
+          <div class="personal-records-heading">
+            <div>
+              <p class="eyebrow">Catatan latihan</p>
+              <h2 id="personal-records-heading">Rekor Saya</h2>
+              <p id="personal-records-student" class="personal-records-student"></p>
+            </div>
+            <div class="personal-records-actions">
+              <button id="personal-records-refresh" class="button button-outline" type="button">Muat ulang</button>
+              <button id="personal-records-close" class="button button-outline personal-records-close" type="button" aria-label="Tutup rekor">Tutup</button>
+            </div>
+          </div>
+          <p id="personal-records-status" class="personal-records-status" role="status" aria-live="polite"></p>
+          <a id="personal-records-login" class="button button-primary is-hidden" href="student.html">Simpan identitas siswa</a>
+          <ul id="personal-records-list" class="personal-records-list" aria-label="Nilai tertinggi per latihan"></ul>
+        </div>
+      </dialog>
 
       <section id="latihan" class="home-catalog container" aria-labelledby="exercise-heading">
         <div class="home-catalog-heading">
@@ -326,5 +346,6 @@
       <div class="container"><p>Math Practice · Latihan terarah, hasil tercatat.</p></div>
     </footer>
     <script src="js/common.js"></script>
+    <script src="js/home.js"></script>
   </body>
 </html>

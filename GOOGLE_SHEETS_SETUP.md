@@ -49,6 +49,8 @@ Di bagian atas `google-apps-script/Code.gs`, isi `TEACHER_PASSWORD` dengan passw
 
 Halaman guru tersedia di `guru.html`. Daftar nilai dan tindakan hapus hanya dapat dipanggil dengan sesi yang dibuat setelah verifikasi password oleh Apps Script. Penghapusan semua nilai memerlukan konfirmasi dialog dan mengetik `HAPUS`. Hasil duplikat dikelompokkan berdasarkan ID siswa pada latihan terpilih; nilai tertinggi dipertahankan, dan jika sama, hasil terbaru dipilih.
 
+Tombol **Rekor saya** di navbar membuka dialog berisi nilai tertinggi per latihan untuk ID siswa yang tersimpan. Daftar ini membaca sheet `Results` melalui aksi `student_records`; setiap perubahan pada `Code.gs` perlu di-deploy sebagai versi baru sebelum fitur menggunakan endpoint terbaru. Karena identitas siswa saat ini hanya disimpan di perangkat dan tidak diverifikasi sebagai sesi server, pengguna yang mengetahui ID lain berpotensi meminta rekornya. Jangan gunakan endpoint ini untuk data sensitif.
+
 **Batas keamanan:** Web App tetap dapat diakses publik agar siswa dapat mengirim nilai. Password yang disimpan sebagai teks di `Code.gs` adalah gerbang sederhana, bukan sistem akun guru lengkap. Siapa pun yang memiliki password dapat mengelola seluruh nilai; batasi pembagian password dan ganti jika diketahui pihak lain. Apps Script juga tidak menyediakan pembatasan percobaan login yang kuat pada rancangan ini.
 
 ## 4. Deploy sebagai Web App
