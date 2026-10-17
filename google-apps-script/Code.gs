@@ -8,6 +8,7 @@ const STUDENTS_SHEET_NAME = 'Students';
 const STUDENTS_HEADERS = ['student_id', 'name', 'class_name'];
 const STUDENTS_CACHE_KEY = 'students_lookup_data_v1';
 const STUDENTS_CACHE_SECONDS = 300;
+const SPEED_EXERCISE_IDS = ['perkalian_cepat_01', 'pembagian_cepat_01', 'pembagian_lanjutan_01', 'bilangan_negatif_01'];
 const RESULTS_HEADERS = [
   'timestamp',
   'student_id',
@@ -69,6 +70,11 @@ function doGet(e) {
       const studentId = requireStudentId(e.parameter.student_id || '');
       return createJsonResponse({ success: true, records: getStudentBestRecords(studentId) });
     }
+    if (action === 'speed_leaderboard') {
+      const studentId = requireStudentId(e.parameter.student_id || '');
+      const exerciseId = requireText(e.parameter.exercise_id || '', 'exercise_id', 100);
+      return createJsonResponse({ success: true, results: getSpeedLeaderboard(studentId, exerciseId) });
+    }
     throw new Error('Aksi pencarian tidak valid.');
   } catch (error) {
     console.error(error);
@@ -110,6 +116,53 @@ function getStudentBestRecords(studentId) {
   }).sort(function(a, b) {
     return a.exercise_name.localeCompare(b.exercise_name, 'id');
   });
+}
+
+function getSpeedLeaderboard(requestingStudentId, exerciseId) {
+  if (SPEED_EXERCISE_IDS.indexOf(exerciseId) === -1) throw new Error('Papan skor hanya tersedia untuk latihan kecepatan berhitung.');
+
+  const requestingStudent = findStudentById(requestingStudentId);
+  if (!requestingStudent) throw new Error('ID siswa tidak ditemukan.');
+  const studentsData = getStudentsLookupData();
+  const indexes = getStudentsHeaderIndexes(studentsData.headers);
+  const studentsById = Object.create(null);
+  studentsData.rows.forEach(function(row) {
+    const studentId = String(row[indexes.student_id]).trim().toUpperCase();
+    const className = String(row[indexes.class_name]).trim();
+    if (studentId && className.toUpperCase() === requestingStudent.class_name.trim().toUpperCase()) {
+      studentsById[studentId] = { name: String(row[indexes.name]).trim() };
+    }
+  });
+
+  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(RESULTS_SHEET_NAME);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, RESULTS_HEADERS.length).getValues();
+  const bestByStudent = Object.create(null);
+  rows.forEach(function(row) {
+    if (String(row[4]).trim() !== exerciseId) return;
+    const studentId = String(row[1]).trim().toUpperCase();
+    const student = studentsById[studentId];
+    if (!student) return;
+
+    const score = Number(row[9]) || 0;
+    const timestamp = row[0] instanceof Date ? row[0].getTime() : new Date(row[0]).getTime() || 0;
+    const existing = bestByStudent[studentId];
+    if (!existing || score > existing.score || (score === existing.score && timestamp < existing.timestamp)) {
+      bestByStudent[studentId] = { student_id: studentId, student_name: student.name, score: score, timestamp: timestamp };
+    }
+  });
+
+  return Object.keys(bestByStudent).map(function(studentId) { return bestByStudent[studentId]; })
+    .sort(function(a, b) { return b.score - a.score || a.timestamp - b.timestamp || a.student_id.localeCompare(b.student_id); })
+    .slice(0, 10)
+    .map(function(result, index) {
+      return {
+        rank: index + 1,
+        student_name: result.student_name,
+        score: result.score,
+        timestamp: result.timestamp ? new Date(result.timestamp).toISOString() : ''
+      };
+    });
 }
 
 function handleTeacherAction(payload) {

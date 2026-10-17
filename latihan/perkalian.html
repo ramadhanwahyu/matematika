@@ -55,13 +55,24 @@
           <div><span id="incorrect-count">0</span><p>Jawaban salah</p></div>
           <div><span id="total-count">0</span><p>Total dijawab</p></div>
         </div>
-        <section class="result-review" aria-labelledby="review-title">
-          <div class="result-review-heading">
-            <p class="eyebrow">Tinjauan jawaban</p>
-            <h2 id="review-title">Periksa jawabanmu</h2>
+        <details class="result-accordion result-review">
+          <summary class="result-accordion-summary" aria-labelledby="review-title">
+            <span class="result-accordion-heading"><span class="result-accordion-eyebrow">Tinjauan jawaban</span><span id="review-title" class="result-accordion-title" role="heading" aria-level="2">Periksa jawabanmu</span></span>
+            <span class="result-accordion-indicator" aria-hidden="true"></span>
+          </summary>
+          <div class="result-accordion-content"><div id="result-review-list" class="result-review-list"></div></div>
+        </details>
+        <details id="speed-leaderboard" class="result-accordion speed-leaderboard" data-exercise-id="perkalian_cepat_01">
+          <summary class="result-accordion-summary" aria-labelledby="speed-leaderboard-title">
+            <span class="result-accordion-heading"><span class="result-accordion-eyebrow">Papan skor kelas</span><span id="speed-leaderboard-title" class="result-accordion-title" role="heading" aria-level="2">Top 10 di kelasmu</span></span>
+            <span class="result-accordion-indicator" aria-hidden="true"></span>
+          </summary>
+          <div class="result-accordion-content">
+            <button id="speed-leaderboard-refresh" class="button button-outline button-small speed-leaderboard-refresh" type="button">Muat ulang</button>
+            <p id="speed-leaderboard-status" class="speed-leaderboard-status" role="status" aria-live="polite">Papan skor akan dimuat setelah nilai tersimpan.</p>
+            <ol id="speed-leaderboard-list" class="speed-leaderboard-list" aria-label="Peringkat 10 peserta dengan skor tertinggi"></ol>
           </div>
-          <div id="result-review-list" class="result-review-list"></div>
-        </section>
+        </details>
         <div class="result-actions">
           <button class="button button-primary" type="button" onclick="window.MathPractice.startMultiplicationExercise()">Ulangi latihan</button>
           <a class="button button-outline" href="../index.html">Kembali ke beranda</a>

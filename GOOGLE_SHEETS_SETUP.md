@@ -51,6 +51,10 @@ Halaman guru tersedia di `guru.html`. Daftar nilai dan tindakan hapus hanya dapa
 
 Tombol **Rekor saya** di navbar membuka dialog berisi nilai tertinggi per latihan untuk ID siswa yang tersimpan. Daftar ini membaca sheet `Results` melalui aksi `student_records`; setiap perubahan pada `Code.gs` perlu di-deploy sebagai versi baru sebelum fitur menggunakan endpoint terbaru. Karena identitas siswa saat ini hanya disimpan di perangkat dan tidak diverifikasi sebagai sesi server, pengguna yang mengetahui ID lain berpotensi meminta rekornya. Jangan gunakan endpoint ini untuk data sensitif.
 
+Empat latihan kategori Kecepatan Berhitung juga menampilkan papan skor 10 peserta teratas pada halaman hasil. Server mengambil kelas dari sheet `Students`, memakai skor terbaik setiap siswa untuk latihan yang sama, mengurutkan skor tertinggi lebih dahulu dan waktu pencapaian paling awal sebagai pemecah seri, lalu membatasi daftar menjadi 10 siswa. Jangan kirim nama atau kelas ke endpoint sebagai dasar filter; Apps Script menentukan keduanya dari data siswa.
+
+Papan skor tetap memakai ID dari identitas yang tersimpan di browser untuk menentukan kelas. Karena aplikasi belum memiliki autentikasi siswa yang diverifikasi server, pengguna yang mengetahui ID siswa di kelas lain dapat meminta papan skor kelas tersebut. Gunakan fitur ini untuk lingkungan kelas dengan data non-sensitif.
+
 **Batas keamanan:** Web App tetap dapat diakses publik agar siswa dapat mengirim nilai. Password yang disimpan sebagai teks di `Code.gs` adalah gerbang sederhana, bukan sistem akun guru lengkap. Siapa pun yang memiliki password dapat mengelola seluruh nilai; batasi pembagian password dan ganti jika diketahui pihak lain. Apps Script juga tidak menyediakan pembatasan percobaan login yang kuat pada rancangan ini.
 
 ## 4. Deploy sebagai Web App

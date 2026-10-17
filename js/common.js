@@ -165,6 +165,154 @@
     return responseData.records;
   };
 
+  window.MathPractice.getSpeedLeaderboard = async function getSpeedLeaderboard(exerciseId) {
+    const student = window.MathPractice.getStudent();
+    const endpoint = window.MathPractice.config.appsScriptWebAppUrl.trim();
+    if (!student) throw new Error("Identitas siswa tidak ditemukan. Simpan identitas sebelum melihat papan skor.");
+    if (!endpoint) throw new Error("URL Google Apps Script belum diisi. Tambahkan URL /exec pada js/common.js.");
+
+    const lookupUrl = new URL(endpoint);
+    lookupUrl.searchParams.set("action", "speed_leaderboard");
+    lookupUrl.searchParams.set("student_id", student.student_id);
+    lookupUrl.searchParams.set("exercise_id", exerciseId);
+    const response = await fetch(lookupUrl.toString(), { method: "GET", redirect: "follow", credentials: "omit" });
+    if (!response.ok) throw new Error("Server tidak dapat memuat papan skor saat ini.");
+
+    const responseData = await response.json();
+    if (!responseData || responseData.success !== true || !Array.isArray(responseData.results)) {
+      throw new Error(responseData && responseData.message ? responseData.message : "Server menolak permintaan papan skor.");
+    }
+    return responseData.results;
+  };
+
+  window.MathPractice.loadSpeedLeaderboard = async function loadSpeedLeaderboard(exerciseId) {
+    const panel = document.getElementById("speed-leaderboard");
+    if (!panel) return;
+    const list = document.getElementById("speed-leaderboard-list");
+    const status = document.getElementById("speed-leaderboard-status");
+    const refreshButton = document.getElementById("speed-leaderboard-refresh");
+    const requestedExerciseId = exerciseId || panel.dataset.exerciseId;
+    const requestNumber = Number(panel.dataset.requestNumber || 0) + 1;
+    panel.dataset.requestNumber = String(requestNumber);
+    refreshButton.disabled = true;
+    status.textContent = "Memuat 10 skor tertinggi di kelasmu…";
+    status.dataset.state = "pending";
+
+    try {
+      const results = await window.MathPractice.getSpeedLeaderboard(requestedExerciseId);
+      if (panel.dataset.requestNumber !== String(requestNumber)) return;
+      list.replaceChildren(...results.map(function (result) {
+        const item = document.createElement("li");
+        item.className = "speed-leaderboard-row";
+        const rank = document.createElement("span");
+        rank.className = "speed-leaderboard-rank";
+        rank.textContent = String(result.rank);
+        const name = document.createElement("span");
+        name.className = "speed-leaderboard-name";
+        name.textContent = result.student_name;
+        const score = document.createElement("span");
+        score.className = "speed-leaderboard-score";
+        score.append(document.createTextNode(`${result.score} poin`));
+        if (result.timestamp) {
+          const achievedAt = new Date(result.timestamp);
+          if (!Number.isNaN(achievedAt.getTime())) {
+            const time = document.createElement("time");
+            time.className = "speed-leaderboard-time";
+            time.dateTime = achievedAt.toISOString();
+            time.textContent = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(achievedAt);
+            score.append(time);
+          }
+        }
+        item.append(rank, name, score);
+        return item;
+      }));
+      status.textContent = results.length ? `${results.length} peserta dengan skor tertinggi di kelasmu.` : "Belum ada nilai tersimpan untuk latihan ini di kelasmu.";
+      status.dataset.state = results.length ? "success" : "empty";
+    } catch (error) {
+      if (panel.dataset.requestNumber !== String(requestNumber)) return;
+      const hasPreviousResults = list.childElementCount > 0;
+      status.textContent = hasPreviousResults
+        ? `Pembaruan papan skor gagal. Daftar terakhir tetap ditampilkan. ${error.message}`
+        : `Papan skor belum dapat dimuat. ${error.message}`;
+      status.dataset.state = "error";
+    } finally {
+      if (panel.dataset.requestNumber === String(requestNumber)) refreshButton.disabled = false;
+    }
+  };
+
+  document.querySelectorAll("#speed-leaderboard").forEach(function (panel) {
+    const refreshButton = document.getElementById("speed-leaderboard-refresh");
+    if (refreshButton) refreshButton.addEventListener("click", function () {
+      window.MathPractice.loadSpeedLeaderboard(panel.dataset.exerciseId);
+    });
+  });
+
+  document.querySelectorAll(".result-accordion").forEach(function (accordion) {
+    const summary = accordion.querySelector("summary");
+    const content = accordion.querySelector(".result-accordion-content");
+    if (!summary || !content || typeof content.animate !== "function") return;
+
+    let animation = null;
+    let isClosing = false;
+    let interactionNumber = 0;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    function resetContent() {
+      content.style.height = "";
+      content.style.overflow = "";
+      content.style.opacity = "";
+    }
+
+    function animateContent(open) {
+      const currentHeight = content.getBoundingClientRect().height;
+      const fullHeight = content.scrollHeight;
+      if (animation) animation.cancel();
+      content.style.overflow = "hidden";
+
+      if (reduceMotion.matches) {
+        if (!open) accordion.open = false;
+        resetContent();
+        isClosing = false;
+        animation = null;
+        return;
+      }
+
+      content.style.height = `${currentHeight}px`;
+      content.style.opacity = open ? "0" : "1";
+      animation = content.animate(
+        [
+          { height: `${currentHeight}px`, opacity: open ? 0 : 1 },
+          { height: `${open ? fullHeight : 0}px`, opacity: open ? 1 : 0 }
+        ],
+        { duration: 240, easing: "cubic-bezier(.2,.75,.25,1)" }
+      );
+      isClosing = !open;
+      animation.onfinish = function () {
+        if (!open) accordion.open = false;
+        resetContent();
+        isClosing = false;
+        animation = null;
+      };
+    }
+
+    summary.addEventListener("click", function (event) {
+      const currentInteraction = ++interactionNumber;
+      if (!accordion.open) {
+        if (reduceMotion.matches) return;
+        content.style.height = "0px";
+        content.style.overflow = "hidden";
+        content.style.opacity = "0";
+        window.requestAnimationFrame(function () {
+          if (currentInteraction === interactionNumber && accordion.open) animateContent(true);
+        });
+        return;
+      }
+
+      event.preventDefault();
+      animateContent(isClosing);
+    });
+  });
+
   const savedStudent = window.MathPractice.getStudent();
   document.querySelectorAll("[data-student-link]").forEach(function (link) {
     if (savedStudent) link.textContent = "Ganti identitas";

@@ -91,6 +91,7 @@
       updateSubmissionStatus(submission, `Nilai belum berhasil disimpan. ${error.message} Silakan coba lagi setelah diperbaiki.`, "error", true);
     } finally {
       submission.isSaving = false;
+      void window.MathPractice.loadSpeedLeaderboard(exercise.id);
     }
   }
 

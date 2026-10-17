@@ -10,8 +10,10 @@
 - Deduplikasi berlaku hanya untuk latihan terpilih, dikelompokkan dengan `student_id`, menyisakan nilai terbesar; saat nilai sama, timestamp paling baru dipertahankan. Server menentukan baris yang dihapus.
 - Operasi daftar dan mutasi guru berjalan di Apps Script. Mutasi dilindungi token sesi dan `ScriptLock`; append nilai siswa tetap menerima payload publik sesuai alur latihan.
 - Setelah mutasi berhasil, daftar dimuat ulang dari server. Kegagalan tidak optimistis menghapus baris dari tampilan.
-- Tombol navbar membuka dialog modal rekor pribadi untuk identitas siswa yang tersimpan pada perangkat. Satu rekor tertinggi ditampilkan untuk setiap `exercise_id`; saat skor sama, timestamp terbaru dipakai. Dialog menyediakan keadaan memuat, kosong, gagal, muat ulang, dan tautan identitas bila belum ada siswa tersimpan.
+- Tombol navbar membuka dialog modal rekor pribadi untuk identitas siswa yang tersimpan pada perangkat. Satu rekor tertinggi ditampilkan untuk setiap `exercise_id`; saat skor sama, timestamp terbaru dipakai. Kelompok dan urutan latihannya mengikuti katalog di beranda: Kecepatan Berhitung, Pecahan, Aljabar, Barisan dan Deret, lalu Eksponen; urutan kartu dipertahankan di tiap kelompok. Dialog menyediakan keadaan memuat, kosong, gagal, muat ulang, dan tautan identitas bila belum ada siswa tersimpan.
 - Identitas siswa di `localStorage` belum merupakan autentikasi server. Endpoint `student_records` mengikuti batas keamanan MVP yang sama dengan endpoint pencarian siswa; jangan tampilkan data sensitif melalui endpoint publik ini.
+- Hasil empat latihan kategori Kecepatan Berhitung menampilkan 10 siswa teratas pada kelas aktif. Apps Script menentukan kelas dari data `Students`, mempertahankan skor tertinggi per siswa untuk latihan itu, lalu mengurutkan skor menurun dan waktu pencapaian menaik sebelum mengambil 10 baris. ID siswa tidak ditampilkan.
+- Pada hasil latihan, bagian tinjauan jawaban dan papan skor memakai `<details>/<summary>` native dan tertutup secara default. Keduanya berbagi gaya judul dan indikator buka/tutup yang konsisten, dengan transisi tinggi dan opacity saat dibuka/ditutup; animasi dinonaktifkan saat preferensi `prefers-reduced-motion` aktif. Isi dan kontrol muat ulang papan skor tersedia setelah dibuka.
 
 ## Kepemilikan komponen
 

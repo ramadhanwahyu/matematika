@@ -12,6 +12,13 @@
   const openButton = document.getElementById("open-personal-records");
   const closeButton = document.getElementById("personal-records-close");
   let requestNumber = 0;
+  const exerciseGroups = [
+    { label: "Kecepatan Berhitung", ids: ["perkalian_cepat_01", "pembagian_cepat_01", "pembagian_lanjutan_01", "bilangan_negatif_01"] },
+    { label: "Pecahan", ids: ["menyamakan_pecahan_01", "penjumlahan_pecahan_01", "perkalian_pecahan_01"] },
+    { label: "Aljabar", ids: ["aljabar_dasar_level_1_01", "aljabar_dasar_01", "soal_cerita_aljabar_level_1_01", "soal_cerita_aljabar_level_2_01"] },
+    { label: "Barisan dan Deret", ids: ["barisan_dasar_01", "barisan_aritmetika_un_01"] },
+    { label: "Eksponen", ids: ["eksponen_dasar_01", "eksponen_01", "eksponen_aljabar_01"] }
+  ];
 
   function setStatus(message, state) {
     status.textContent = message;
@@ -25,30 +32,77 @@
     return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(date);
   }
 
+  function createRecordItem(record) {
+    const item = document.createElement("li");
+    item.className = "personal-record-row";
+
+    const name = document.createElement("span");
+    name.className = "personal-record-name";
+    name.textContent = record.exercise_name || record.exercise_id;
+
+    const result = document.createElement("span");
+    result.className = "personal-record-value";
+    result.append(document.createTextNode(String(record.score)));
+    const date = formatDate(record.timestamp);
+    if (date) {
+      const dateLabel = document.createElement("span");
+      dateLabel.className = "personal-record-date";
+      dateLabel.textContent = date;
+      result.append(dateLabel);
+    }
+
+    item.append(name, result);
+    return item;
+  }
+
   function renderRecords(records) {
-    list.replaceChildren();
-    records.forEach(function (record) {
-      const item = document.createElement("li");
-      item.className = "personal-record-row";
+    const recordsById = new Map(records.map(function (record) { return [record.exercise_id, record]; }));
+    const placed = new Set();
+    const renderedGroups = document.createDocumentFragment();
 
-      const name = document.createElement("span");
-      name.className = "personal-record-name";
-      name.textContent = record.exercise_name || record.exercise_id;
+    exerciseGroups.forEach(function (group) {
+      const groupRecords = group.ids.map(function (id) { return recordsById.get(id); }).filter(Boolean);
+      if (!groupRecords.length) return;
 
-      const result = document.createElement("span");
-      result.className = "personal-record-value";
-      result.append(document.createTextNode(String(record.score)));
-      const date = formatDate(record.timestamp);
-      if (date) {
-        const dateLabel = document.createElement("span");
-        dateLabel.className = "personal-record-date";
-        dateLabel.textContent = date;
-        result.append(dateLabel);
-      }
+      const groupSection = document.createElement("section");
+      groupSection.className = "personal-record-group";
+      groupSection.setAttribute("aria-label", group.label);
+      const heading = document.createElement("div");
+      heading.className = "personal-record-category-heading";
+      const title = document.createElement("h3");
+      title.textContent = group.label;
+      heading.append(title);
 
-      item.append(name, result);
-      list.append(item);
+      const groupList = document.createElement("ul");
+      groupList.className = "personal-records-list";
+      groupList.setAttribute("aria-label", `Rekor ${group.label}`);
+      groupRecords.forEach(function (record) {
+        placed.add(record.exercise_id);
+        groupList.append(createRecordItem(record));
+      });
+      groupSection.append(heading, groupList);
+      renderedGroups.append(groupSection);
     });
+
+    const ungrouped = records.filter(function (record) { return !placed.has(record.exercise_id); })
+      .sort(function (a, b) { return (a.exercise_name || a.exercise_id).localeCompare(b.exercise_name || b.exercise_id, "id"); });
+    if (ungrouped.length) {
+      const groupSection = document.createElement("section");
+      groupSection.className = "personal-record-group";
+      groupSection.setAttribute("aria-label", "Latihan lainnya");
+      const heading = document.createElement("div");
+      heading.className = "personal-record-category-heading";
+      const title = document.createElement("h3");
+      title.textContent = "Latihan lainnya";
+      heading.append(title);
+      const groupList = document.createElement("ul");
+      groupList.className = "personal-records-list";
+      ungrouped.forEach(function (record) { groupList.append(createRecordItem(record)); });
+      groupSection.append(heading, groupList);
+      renderedGroups.append(groupSection);
+    }
+
+    list.replaceChildren(renderedGroups);
   }
 
   async function loadRecords() {

@@ -106,6 +106,10 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .personal-records-status { min-height: 1.5em; margin: 1rem 0 0; color: var(--color-muted); font-size: .88rem; }
 .personal-records-status[data-state="error"] { color: var(--color-danger); }
 .personal-records-status[data-state="success"] { color: var(--color-success); }
+.personal-record-groups { display: grid; gap: 1.1rem; margin-top: .25rem; }
+.personal-record-category-heading { display: flex; align-items: center; gap: .7rem; margin-bottom: .65rem; }
+.personal-record-category-heading h3 { flex: 0 0 auto; margin: 0; padding: .28rem .55rem; border-left: 3px solid var(--color-primary); border-radius: .2rem; color: var(--color-primary-dark); background: var(--color-primary-soft); font-family: var(--font-sans); font-size: .69rem; font-weight: 800; letter-spacing: .095em; line-height: 1.35; text-transform: uppercase; }
+.personal-record-category-heading::after { content: ""; flex: 1; height: 1px; background: var(--color-border); }
 .personal-records-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; margin: .25rem 0 0; padding: 0; list-style: none; }
 .personal-record-row { display: flex; align-items: center; justify-content: space-between; min-width: 0; gap: 1rem; padding: .8rem .95rem; border: 1px solid var(--color-border); border-radius: .7rem; background: #fbfcfb; }
 .personal-record-name { min-width: 0; color: var(--color-ink); font-size: .88rem; font-weight: 650; overflow-wrap: anywhere; }
@@ -290,10 +294,19 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .save-status[data-state="success"] { color: var(--color-success); }
 .save-status[data-state="error"] { color: var(--color-danger); }
 .result-card .text-button { margin-top: .3rem; }
-.result-review { margin: 2.1rem 0 1.8rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border); text-align: left; }
-.result-review-heading { margin-bottom: 1rem; }
-.result-review-heading .eyebrow { margin-bottom: .4rem; }
-.result-review-heading h2 { margin: 0; font-size: clamp(1.35rem, 3vw, 1.8rem); }
+.result-accordion { margin: 1.35rem 0; overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: #fff; text-align: left; }
+.result-accordion-summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 5rem; padding: .9rem 1.1rem; list-style: none; cursor: pointer; transition: background-color 150ms ease; }
+.result-accordion-summary::-webkit-details-marker { display: none; }
+.result-accordion-summary:hover { background: #f8fafb; }
+.result-accordion-summary:focus-visible { outline: 3px solid rgba(31, 103, 151, .35); outline-offset: -3px; }
+.result-accordion-heading { display: grid; gap: .1rem; min-width: 0; }
+.result-accordion-eyebrow { color: var(--color-primary); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.result-accordion-title { color: var(--color-ink); font-family: var(--font-display); font-size: clamp(1.25rem, 2.8vw, 1.65rem); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; }
+.result-accordion-indicator { display: grid; flex: 0 0 auto; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--color-border); border-radius: 50%; color: var(--color-primary-dark); background: var(--color-canvas); font-size: 1.15rem; font-weight: 600; }
+.result-accordion-indicator::before { content: "+"; }
+.result-accordion[open] .result-accordion-indicator::before { content: "−"; }
+.result-accordion-content { padding: 1rem 1.1rem 1.1rem; border-top: 1px solid var(--color-border); }
+.speed-leaderboard-refresh { margin-bottom: .35rem; }
 .result-review-list { display: grid; gap: .7rem; }
 .result-review-item { padding: .9rem 1rem; border: 1px solid var(--color-border); border-left: 3px solid var(--color-rule); border-radius: var(--radius-control); background: #fff; }
 .result-review-item[data-state="correct"] { border-left-color: var(--color-success); }
@@ -314,6 +327,17 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
 .result-review-expression.fraction-review-expression { display: inline-flex; align-items: center; gap: .45rem; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; }
 .multiplication-review-expression { margin-bottom: .55rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -.03em; }
 .result-review-empty { margin: 0; padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-control); color: var(--color-muted); background: #fff; font-size: .9rem; }
+.speed-leaderboard-status { min-height: 1.5em; margin: .8rem 0 .35rem; color: var(--color-muted); font-size: .82rem; }
+.speed-leaderboard-status[data-state="success"] { color: var(--color-success); }
+.speed-leaderboard-status[data-state="error"] { color: var(--color-danger); }
+.speed-leaderboard-list { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.speed-leaderboard-row { display: grid; grid-template-columns: 2.15rem minmax(0, 1fr) auto; align-items: center; gap: .75rem; min-width: 0; padding: .55rem .65rem; border-top: 1px solid var(--color-border); background: #fff; }
+.speed-leaderboard-row:first-child { border-top-color: transparent; border-radius: .45rem .45rem 0 0; }
+.speed-leaderboard-rank { display: grid; place-items: center; width: 1.85rem; height: 1.85rem; border-radius: .45rem; color: var(--color-primary-dark); background: var(--color-primary-soft); font-size: .78rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.speed-leaderboard-row:first-child .speed-leaderboard-rank { color: #614500; background: #fff1bd; }
+.speed-leaderboard-name { min-width: 0; overflow-wrap: anywhere; color: var(--color-ink); font-size: .88rem; font-weight: 650; }
+.speed-leaderboard-score { color: var(--color-primary-dark); font-family: var(--font-display); font-size: 1rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.speed-leaderboard-time { display: block; margin-top: .08rem; color: var(--color-muted); font-family: var(--font-sans); font-size: .67rem; font-weight: 500; }
 
 .speed-quiz-card { width: min(100%, 38rem); text-align: center; }
 .speed-topline { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: .8rem; border-bottom: 1px solid var(--color-border); }
@@ -436,6 +460,10 @@ h3 { margin-bottom: .45rem; font-family: var(--font-display); font-size: 1.5rem;
   .fraction-answer-input { width: 3.8rem; height: 2.55rem; font-size: 2.1rem; }
   .equivalent-answer-value { width: 3.8rem; height: 2.55rem; font-size: 2.1rem; }
   .result-details { grid-template-columns: 1fr; }
+  .result-accordion-summary { padding-inline: .85rem; }
+  .result-accordion-content { padding: .85rem; }
+  .speed-leaderboard-refresh { width: 100%; }
+  .speed-leaderboard-row { gap: .5rem; padding-inline: .35rem; }
   .sequence-input-row { align-items: stretch; flex-direction: column; gap: .55rem; }
   .sequence-input-group label { text-align: left; }
   .sequence-answer-input { width: 100%; }
