@@ -39,9 +39,10 @@
         <form id="answer-form" class="speed-answer-form" novalidate>
           <p id="question-expression" class="multiplication-expression division-expression" aria-live="polite"></p>
           <label class="sr-only" for="answer-input">Jawaban pembagian</label>
-          <input id="answer-input" class="speed-answer-input" name="answer" type="text" inputmode="numeric" autocomplete="off" maxlength="3" aria-describedby="answer-message" />
+          <input id="answer-input" class="speed-answer-input" name="answer" type="text" inputmode="numeric" autocomplete="off" maxlength="3" aria-describedby="answer-message rate-limit-status" />
           <p id="answer-message" class="form-message speed-message" role="alert"></p>
-          <button class="button button-primary" type="submit">Jawab</button>
+          <p id="rate-limit-status" class="rate-limit-status is-hidden" aria-live="off"></p>
+          <button id="answer-submit-button" class="button button-primary" type="submit">Jawab</button>
         </form>
       </section>
 

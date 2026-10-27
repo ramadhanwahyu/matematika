@@ -12,6 +12,8 @@
   const timerValue = document.getElementById("timer-value");
   const correctProgress = document.getElementById("correct-progress");
   const answerMessage = document.getElementById("answer-message");
+  const rateLimitStatus = document.getElementById("rate-limit-status");
+  const answerSubmitButton = document.getElementById("answer-submit-button");
   const saveStatus = document.getElementById("save-status");
   const retrySaveButton = document.getElementById("retry-save-button");
   const studentSummary = document.getElementById("student-summary");
@@ -26,6 +28,9 @@
   let hasFinishedSession = false;
   let currentSubmission = null;
   let answerHistory = [];
+  let submissionTimestamps = [];
+  let cooldownUntil = 0;
+  let cooldownLevel = 0;
 
   const student = window.MathPractice.getStudent();
   if (!student) {
@@ -55,6 +60,8 @@
     questionExpression.setAttribute("aria-label", `${currentQuestion.dividend} dibagi ${currentQuestion.divisor}`);
     answerForm.reset();
     answerMessage.textContent = "";
+    rateLimitStatus.textContent = "";
+    rateLimitStatus.classList.add("is-hidden");
     answerInput.removeAttribute("aria-invalid");
     answerInput.focus();
   }
@@ -64,7 +71,39 @@
     const minutes = Math.floor(remainingSeconds / 60);
     const seconds = remainingSeconds % 60;
     timerValue.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    updateCooldown(Date.now());
     if (remainingSeconds === 0) finishExercise();
+  }
+
+  function updateCooldown(now) {
+    if (!cooldownUntil) return;
+    const remainingSeconds = Math.max(0, Math.ceil((cooldownUntil - now) / 1000));
+    if (remainingSeconds === 0) {
+      cooldownUntil = 0;
+      answerInput.disabled = false;
+      answerSubmitButton.disabled = false;
+      answerMessage.textContent = "";
+      rateLimitStatus.textContent = "";
+      rateLimitStatus.classList.add("is-hidden");
+      answerInput.focus();
+      return;
+    }
+    rateLimitStatus.textContent = `Kamu dapat menjawab lagi dalam ${remainingSeconds} detik.`;
+  }
+
+  function startCooldown(now) {
+    // Cooldown meningkat jika batas kembali terlampaui dalam sesi yang sama, hingga 30 detik.
+    cooldownLevel += 1;
+    const cooldownSeconds = Math.min(10 * (2 ** (cooldownLevel - 1)), 30);
+    cooldownUntil = now + cooldownSeconds * 1000;
+    submissionTimestamps = [];
+    answerInput.value = "";
+    answerInput.disabled = true;
+    answerSubmitButton.disabled = true;
+    answerInput.removeAttribute("aria-invalid");
+    answerMessage.textContent = "Terdeteksi kegiatan mencurigakan. Jeda sebentar sebelum melanjutkan.";
+    rateLimitStatus.classList.remove("is-hidden");
+    updateCooldown(now);
   }
 
   function setSaveStatus(message, state, canRetry) {
@@ -169,6 +208,11 @@
     hasFinishedSession = false;
     currentSubmission = null;
     answerHistory = [];
+    submissionTimestamps = [];
+    cooldownUntil = 0;
+    cooldownLevel = 0;
+    answerInput.disabled = false;
+    answerSubmitButton.disabled = false;
     correctProgress.textContent = "0 poin";
     setSaveStatus("", "idle", false);
     deadline = Date.now() + exercise.durationSeconds * 1000;
@@ -185,11 +229,19 @@
       finishExercise();
       return;
     }
+    const now = Date.now();
+    if (cooldownUntil > now) return;
     const answerText = answerInput.value.trim();
     if (!/^\d+$/.test(answerText)) {
       answerMessage.textContent = "Masukkan jawaban berupa angka.";
       answerInput.setAttribute("aria-invalid", "true");
       answerInput.focus();
+      return;
+    }
+    submissionTimestamps = submissionTimestamps.filter(function (timestamp) { return now - timestamp < 10000; });
+    submissionTimestamps.push(now);
+    if (submissionTimestamps.length >= 30) {
+      startCooldown(now);
       return;
     }
     const studentAnswer = Number(answerText);
