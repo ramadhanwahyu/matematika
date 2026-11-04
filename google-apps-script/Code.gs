@@ -8,7 +8,7 @@ const STUDENTS_SHEET_NAME = 'Students';
 const STUDENTS_HEADERS = ['student_id', 'name', 'class_name'];
 const STUDENTS_CACHE_KEY = 'students_lookup_data_v1';
 const STUDENTS_CACHE_SECONDS = 300;
-const SPEED_EXERCISE_IDS = ['perkalian_cepat_01', 'pembagian_cepat_01', 'pembagian_lanjutan_01', 'bilangan_negatif_01'];
+const SPEED_EXERCISE_IDS = ['perkalian_cepat_01', 'perkalian_cepat_level_2_01', 'pembagian_cepat_01', 'pembagian_lanjutan_01', 'bilangan_negatif_01'];
 const RESULTS_HEADERS = [
   'timestamp',
   'student_id',
