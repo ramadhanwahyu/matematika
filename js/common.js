@@ -12,7 +12,7 @@
   // Satu daftar kategori dipakai halaman rekor dan ruang guru.
   // Saat menambah latihan, daftarkan exercise_id di kelompok yang sesuai.
   window.MathPractice.exerciseGroups = [
-    { label: "Kecepatan Berhitung", ids: ["perkalian_cepat_01", "perkalian_cepat_level_2_01", "pembagian_cepat_01", "pembagian_lanjutan_01", "bilangan_negatif_01"] },
+    { label: "Kecepatan Berhitung", ids: ["perkalian_cepat_01", "perkalian_cepat_level_2_01", "perkalian_cepat_level_3_01", "pembagian_cepat_01", "pembagian_lanjutan_01", "bilangan_negatif_01"] },
     { label: "Pecahan", ids: ["menyamakan_pecahan_01", "penjumlahan_pecahan_01", "perkalian_pecahan_01"] },
     { label: "Aljabar", ids: ["aljabar_dasar_level_1_01", "aljabar_dasar_01", "soal_cerita_aljabar_level_1_01", "soal_cerita_aljabar_level_2_01", "pertidaksamaan_linear_01"] },
     { label: "Barisan dan Deret", ids: ["barisan_dasar_01", "barisan_aritmetika_un_01", "barisan_aritmetika_lanjutan_01", "deret_aritmetika_dasar_01", "barisan_geometri_un_01"] },
